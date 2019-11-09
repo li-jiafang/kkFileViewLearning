@@ -68,29 +68,6 @@ window.open('http://127.0.0.1:8012/picturesPreview?urls='+encodeURIComponent(fil
         </div>
     </div>
 </div>
-
-<div class="loading_container">
-    <div class="spinner">
-        <div class="spinner-container container1">
-            <div class="circle1"></div>
-            <div class="circle2"></div>
-            <div class="circle3"></div>
-            <div class="circle4"></div>
-        </div>
-        <div class="spinner-container container2">
-            <div class="circle1"></div>
-            <div class="circle2"></div>
-            <div class="circle3"></div>
-            <div class="circle4"></div>
-        </div>
-        <div class="spinner-container container3">
-            <div class="circle1"></div>
-            <div class="circle2"></div>
-            <div class="circle3"></div>
-            <div class="circle4"></div>
-        </div>
-    </div>
-</div>
 <script src="js/jquery-3.0.0.min.js" type="text/javascript"></script>
 <script src="//cdn.bootcss.com/jquery.form/3.09/jquery.form.min.js" type="text/javascript"></script>
 <script src="//cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -112,6 +89,9 @@ window.open('http://127.0.0.1:8012/picturesPreview?urls='+encodeURIComponent(fil
             }
         })
     }
+
+
+
     $(function () {
         $('#table').bootstrapTable({
             url: 'listFiles',
@@ -127,6 +107,9 @@ window.open('http://127.0.0.1:8012/picturesPreview?urls='+encodeURIComponent(fil
             $(data).each(function (index, item) {
                 item.action = "<a class='btn btn-default' target='_blank' href='${baseUrl}onlinePreview?url="+ encodeURIComponent('${baseUrl}' + item.fileName ) +"'>预览</a>" +
                     "<a class='btn btn-default' href='javascript:void(0);' onclick='deleteFile(\""+item.fileName+"\")'>删除</a>";
+                console.log(item.fileName);
+                console.log('${baseUrl}');
+                console.log(encodeURIComponent('${baseUrl}' + item.fileName ));
             });
             return data;
         }).on('post-body.bs.table', function (e,data) {

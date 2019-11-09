@@ -35,7 +35,7 @@ public class FontImage {
 	 * @throws WatermarkException 
 	 */
 	public static File createImage(String text) throws WatermarkException {
-		Font font = new Font("宋体", Font.PLAIN, 100);
+		Font font = new Font("宋体", Font.PLAIN, 60);
 		int[] arr = getWidthAndHeight(text, font);
 		int width = arr[0];
 		int height = arr[1];
@@ -51,7 +51,7 @@ public class FontImage {
 		g = image.createGraphics();
 		// 背景透明代码结束
 //		g.fillRect(0, 0, width, height);//画出矩形区域，以便于在矩形区域内写入文字
-		g.setColor(new Color(242, 242, 242));// 再换成黑色，以便于写入文字
+		g.setColor(new Color(255, 0, 0));// 再换成黑色，以便于写入文字
 		g.setFont(font);// 设置画笔字体
 		g.translate(10, 10);
 //		g.rotate(0.1*Math.PI);//旋转

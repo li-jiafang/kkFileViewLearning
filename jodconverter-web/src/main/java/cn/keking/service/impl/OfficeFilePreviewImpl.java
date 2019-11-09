@@ -87,7 +87,9 @@ public class OfficeFilePreviewImpl implements FilePreview {
                  * 转换成pdf后处理并添加水印
                  */
                 File file = new File(outFilePath);
+                File imageFile = new File("E:\\万达信息图标.png");
                 WatermarkProcessor.process(file, "万达信息专有");
+                WatermarkProcessor.process(file,imageFile);
                 if (isHtml) {
                     // 对转换后的文件进行操作(改变编码方式)
                     fileUtils.doActionConvertedFile(outFilePath);
