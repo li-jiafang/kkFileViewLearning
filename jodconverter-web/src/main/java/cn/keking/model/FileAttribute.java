@@ -6,11 +6,11 @@ package cn.keking.model;
  */
 public class FileAttribute {
 
-    private FileType type;
+    private FileType type;  // 文件类型
 
-    private String suffix;
+    private String suffix;   // 文件后缀
 
-    private String name;
+    private String name;     // 文件名字
 
     private String url;
 

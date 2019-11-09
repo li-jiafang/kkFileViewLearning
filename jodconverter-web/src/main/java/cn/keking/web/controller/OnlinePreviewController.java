@@ -7,6 +7,7 @@ import cn.keking.service.FilePreviewFactory;
 
 import cn.keking.service.cache.CacheService;
 import cn.keking.utils.FileUtils;
+import cn.keking.watermarkprocessor.WatermarkException;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,15 +46,32 @@ public class OnlinePreviewController {
     private String fileDir = ConfigConstants.getFileDir();
 
     /**
+     * 预览走用户体系，添加用户校验，满足要求后可以预览，不可以退出
+     * 进入预览模式
      * @param url
      * @param model
      * @return
      */
     @RequestMapping(value = "/onlinePreview", method = RequestMethod.GET)
-    public String onlinePreview(String url, Model model, HttpServletRequest req) {
+    public String onlinePreview(String url, Model model, HttpServletRequest req) throws WatermarkException {
+        /**
+         * 传入url=http://127.0.0.1:8012/demo/测试1 - 副本 (9).docx
+         */
         FileAttribute fileAttribute = fileUtils.getFileAttribute(url);
+        /**
+         * fileAttribute 的所有属性
+         * type = office
+         * suffix = docx
+         * name = 测试1 - 副本 (9).docx
+         * url = http://127.0.0.1:8012/demo/测试1 - 副本 (9).docx
+         * decodeUrl = http://127.0.0.1:8012/demo/测试1 - 副本 (9).docx
+         */
         req.setAttribute("fileKey", req.getParameter("fileKey"));
         model.addAttribute("officePreviewType", req.getParameter("officePreviewType"));
+        /**
+         * 已经解析过的文件
+         * req.getParameter("fileKey")和req.getParameter("officePreviewType")为null
+         */
         FilePreview filePreview = previewFactory.get(fileAttribute);
         return filePreview.filePreviewHandle(url, model, fileAttribute);
     }

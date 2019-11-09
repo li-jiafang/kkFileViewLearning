@@ -23,6 +23,10 @@ public class FilePreviewFactory {
 
     public FilePreview get(FileAttribute fileAttribute) {
         Map<String, FilePreview> filePreviewMap = context.getBeansOfType(FilePreview.class);
+        /**
+         * fileAttribute.getType()= office
+         * fileAttribute.getType().getInstanceName() = officeFilePreviewImpl
+         */
         return filePreviewMap.get(fileAttribute.getType().getInstanceName());
     }
 }

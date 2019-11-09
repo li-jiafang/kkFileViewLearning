@@ -20,7 +20,10 @@
 <div class="container">
     <#list imgurls as img>
         <div class="img-area">
+<#--
             <img class="my-photo" alt="loading" title="查看大图" style="cursor: pointer;" data-src="${img}" src="images/loading.gif" onclick="changePreviewType('allImages')">
+-->
+            <img class="my-photo" alt="loading" title="查看大图" style="cursor: pointer;" data-src="${img}" src="images/loading.gif">
         </div>
     </#list>
 </div>

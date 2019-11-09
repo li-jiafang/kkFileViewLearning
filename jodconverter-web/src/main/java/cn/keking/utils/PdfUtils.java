@@ -23,10 +23,22 @@ public class PdfUtils {
     @Autowired
     FileUtils fileUtils;
 
+    /**
+     *
+     * @param pdfFilePath 生成的pdf文件路径E:\WondersGroup\OnlinePreviewOfOfficeDocuments\kkFileView\jodconverter-web\src\main\file\测试1 - 副本 (9).pdf
+     * @param pdfName 测试1 - 副本 (9).pdf
+     * @param baseUrl http://127.0.0.1:8012/
+     * @return
+     */
     public List<String> pdf2jpg(String pdfFilePath, String pdfName, String baseUrl) {
         List<String> imageUrls = new ArrayList<>();
+        // 查看缓存中是否存在pdfFilePath路径下已经转换过的图片，如果存在，直接返回该url
         Integer imageCount = fileUtils.getConvertedPdfImage(pdfFilePath);
         String imageFileSuffix = ".jpg";
+        /**
+         * pdfFolder = pdfFolder
+         * urlPrefix = http://127.0.0.1:8012/测试1 - 副本 (9)
+         */
         String pdfFolder = pdfName.substring(0, pdfName.length() - 4);
         String urlPrefix = baseUrl + pdfFolder;
         if (imageCount != null && imageCount.intValue() > 0) {
@@ -47,7 +59,11 @@ public class PdfUtils {
             if (!path.exists()) {
                 path.mkdirs();
             }
+            /**
+             * imageFilePath是图片生成的最终路径
+             */
             String imageFilePath;
+            // FIXME: 2019/11/8 这里完成将pdf转换成jpg图片
             for (int pageIndex = 0; pageIndex < pageCount; pageIndex++) {
                 imageFilePath = folder + File.separator + pageIndex + imageFileSuffix;
                 BufferedImage image = pdfRenderer.renderImageWithDPI(pageIndex, 105, ImageType.RGB);

@@ -7,6 +7,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import cn.keking.model.ReturnResponse;
 import cn.keking.utils.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,12 +30,21 @@ import java.util.UUID;
  */
 @RestController
 public class FileController {
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     String fileDir = ConfigConstants.getFileDir();
     @Autowired
     FileUtils fileUtils;
     String demoDir = "demo";
     String demoPath = demoDir + File.separator;
 
+    /**
+     * 文件上传，上传后处理文件存储到服务器
+     * @param file
+     * @param request
+     * @return
+     * @throws JsonProcessingException
+     */
     @RequestMapping(value = "fileUpload", method = RequestMethod.POST)
     public String fileUpload(@RequestParam("file") MultipartFile file,
                              HttpServletRequest request) throws JsonProcessingException {
@@ -51,9 +62,14 @@ public class FileController {
         }
 
         // 判断该文件类型是否有上传过，如果上传过则提示不允许再次上传
-        if (existsTypeFile(fileName)) {
+        // 去除只能上传一个文件的功能
+        /*if (existsTypeFile(fileName)) {
             return new ObjectMapper().writeValueAsString(new ReturnResponse<String>(1, "每一种类型只可以上传一个文件，请先删除原有文件再次上传", null));
-        }
+        }*/
+        // outFile是file+demo
+        /**
+         * 将上传的文件存储到outFile，通过文件流的方式写入到这个文件夹下
+         */
         File outFile = new File(fileDir + demoPath);
         if (!outFile.exists()) {
             outFile.mkdirs();
@@ -72,6 +88,8 @@ public class FileController {
         }
     }
 
+
+
     @RequestMapping(value = "deleteFile", method = RequestMethod.GET)
     public String deleteFile(String fileName) throws JsonProcessingException {
         if (fileName.contains("/")) {
@@ -84,6 +102,11 @@ public class FileController {
         return new ObjectMapper().writeValueAsString(new ReturnResponse<String>(0, "SUCCESS", null));
     }
 
+    /**
+     * 刷新页面文件夹下的list列表
+     * @return
+     * @throws JsonProcessingException
+     */
     @RequestMapping(value = "listFiles", method = RequestMethod.GET)
     public String getFiles() throws JsonProcessingException {
         List<Map<String, String>> list = Lists.newArrayList();
