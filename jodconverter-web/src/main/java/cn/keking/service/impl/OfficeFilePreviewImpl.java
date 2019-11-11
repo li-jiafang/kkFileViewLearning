@@ -97,6 +97,7 @@ public class OfficeFilePreviewImpl implements FilePreview {
                 /**
                  * 转换成pdf后处理并添加水印
                  */
+                System.out.println(wartermarkImagePath);
                 if(!isHtml){
                     File file = new File(outFilePath);
                     File imageFile = new File(wartermarkImagePath);
