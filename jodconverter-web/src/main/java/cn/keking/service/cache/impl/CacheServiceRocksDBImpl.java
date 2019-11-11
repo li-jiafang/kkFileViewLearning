@@ -106,6 +106,8 @@ public class CacheServiceRocksDBImpl implements CacheService {
         } catch (RocksDBException | IOException | ClassNotFoundException e) {
             LOGGER.error("Get from RocksDB Exception" + e);
         }
+        // FIXME: 2019/11/9 暂时将rusult文件清空
+        result.clear();
         return result;
     }
 

@@ -11,6 +11,7 @@ import cn.keking.utils.PdfUtils;
 import cn.keking.watermarkprocessor.WatermarkException;
 import cn.keking.watermarkprocessor.WatermarkProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -25,6 +26,12 @@ import java.util.List;
  */
 @Service
 public class OfficeFilePreviewImpl implements FilePreview {
+
+    @Value("${wartermark.text}")
+    private String wartermarkText;
+
+    @Value("${wartermark.imagepath}")
+    private String wartermarkImagePath;
 
     @Autowired
     FileUtils fileUtils;
@@ -80,16 +87,23 @@ public class OfficeFilePreviewImpl implements FilePreview {
                 return "fileNotSupported";
             }
             filePath = response.getContent();
+            if (isHtml){
+                File file = new File(filePath);
+                WatermarkProcessor.process(file, "万达信息专有");
+            }
             if (StringUtils.hasText(outFilePath)) {
                 //fixme 完成office转PDF
                 officeToPdf.openOfficeToPDF(filePath, outFilePath);
                 /**
                  * 转换成pdf后处理并添加水印
                  */
-                File file = new File(outFilePath);
-                File imageFile = new File("E:\\万达信息图标.png");
-                WatermarkProcessor.process(file, "万达信息专有");
-                WatermarkProcessor.process(file,imageFile);
+                if(!isHtml){
+                    File file = new File(outFilePath);
+                    File imageFile = new File(wartermarkImagePath);
+                    WatermarkProcessor.process(file, wartermarkText);
+                    WatermarkProcessor.process(file,imageFile);
+                }
+
                 if (isHtml) {
                     // 对转换后的文件进行操作(改变编码方式)
                     fileUtils.doActionConvertedFile(outFilePath);

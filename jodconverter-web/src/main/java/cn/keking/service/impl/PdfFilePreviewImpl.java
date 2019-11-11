@@ -7,11 +7,15 @@ import cn.keking.service.FilePreview;
 import cn.keking.utils.DownloadUtils;
 import cn.keking.utils.FileUtils;
 import cn.keking.utils.PdfUtils;
+import cn.keking.watermarkprocessor.WatermarkException;
+import cn.keking.watermarkprocessor.WatermarkProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -21,6 +25,11 @@ import java.util.List;
 @Service
 public class PdfFilePreviewImpl implements FilePreview{
 
+    @Value("${wartermark.text}")
+    private String wartermarkText;
+
+    @Value("${wartermark.imagepath}")
+    private String wartermarkImagePath;
 
     @Autowired
     FileUtils fileUtils;
@@ -34,7 +43,7 @@ public class PdfFilePreviewImpl implements FilePreview{
     String fileDir = ConfigConstants.getFileDir();
 
     @Override
-    public String filePreviewHandle(String url, Model model, FileAttribute fileAttribute) {
+    public String filePreviewHandle(String url, Model model, FileAttribute fileAttribute) throws WatermarkException {
         String suffix=fileAttribute.getSuffix();
         String fileName=fileAttribute.getName();
         String officePreviewType = model.asMap().get("officePreviewType") == null ? ConfigConstants.getOfficePreviewType() : model.asMap().get("officePreviewType").toString();
@@ -45,6 +54,10 @@ public class PdfFilePreviewImpl implements FilePreview{
         if (OfficeFilePreviewImpl.OFFICE_PREVIEW_TYPE_IMAGE.equals(officePreviewType) || OfficeFilePreviewImpl.OFFICE_PREVIEW_TYPE_ALLIMAGES.equals(officePreviewType)) {
             //当文件不存在时，就去下载
             ReturnResponse<String> response = downloadUtils.downLoad(fileAttribute, fileName);
+            File file = new File(outFilePath);
+            File imageFile = new File(wartermarkImagePath);
+            WatermarkProcessor.process(file, wartermarkText);
+            WatermarkProcessor.process(file,imageFile);
             if (0 != response.getCode()) {
                 model.addAttribute("fileType", suffix);
                 model.addAttribute("msg", response.getMsg());

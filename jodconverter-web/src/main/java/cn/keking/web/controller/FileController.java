@@ -35,7 +35,7 @@ public class FileController {
     String fileDir = ConfigConstants.getFileDir();
     @Autowired
     FileUtils fileUtils;
-    String demoDir = "demo";
+    String demoDir = "upload";
     String demoPath = demoDir + File.separator;
 
     /**

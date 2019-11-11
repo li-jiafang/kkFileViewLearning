@@ -33,7 +33,7 @@
     <span>
         该文件类型(${fileType})系统暂时不支持在线预览，<b>说明</b>：
         <p>${msg}</p>
-        如有需要请联系<a href="mailto:1210893441@qq.com">@HappyPig</a>
+        如有需要请联系<a href="mailto:data@wondersgroup.com">@Wonders</a>
     </span>
 </div>
 </body>
