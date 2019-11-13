@@ -132,25 +132,25 @@ public class FileUtils {
 
     public List<String> listPictureTypes(){
         List<String> list = Lists.newArrayList();
-        list.add("jpg");
+/*        list.add("jpg");
         list.add("jpeg");
         list.add("png");
         list.add("gif");
         list.add("bmp");
         list.add("ico");
-        list.add("RAW");
+        list.add("RAW");*/
         return list;
     }
 
     public List<String> listArchiveTypes(){
         List<String> list = Lists.newArrayList();
-        list.add("rar");
+/*        list.add("rar");
         list.add("zip");
         list.add("jar");
         list.add("7-zip");
         list.add("tar");
         list.add("gzip");
-        list.add("7z");
+        list.add("7z");*/
         return list;
     }
 

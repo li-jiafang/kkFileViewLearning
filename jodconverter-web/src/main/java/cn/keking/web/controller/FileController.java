@@ -29,7 +29,7 @@ import java.util.UUID;
 @RestController
 public class FileController {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class);
     String fileDir = ConfigConstants.getFileDir();
     @Autowired
     FileUtils fileUtils;
@@ -46,6 +46,7 @@ public class FileController {
     @RequestMapping(value = "fileUpload", method = RequestMethod.POST)
     public String fileUpload(@RequestParam("file") MultipartFile file,
                              HttpServletRequest request) throws JsonProcessingException {
+        LOGGER.info("FileController--->fileUpload--->file:"+file);
         // 获取文件名
         String fileName = file.getOriginalFilename();
         //判断是否为IE浏览器的文件名，IE浏览器下文件名会带有盘符信息
