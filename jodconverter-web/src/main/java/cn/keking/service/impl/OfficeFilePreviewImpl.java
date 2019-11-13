@@ -4,10 +4,7 @@ import cn.keking.config.ConfigConstants;
 import cn.keking.model.FileAttribute;
 import cn.keking.model.ReturnResponse;
 import cn.keking.service.FilePreview;
-import cn.keking.utils.DownloadUtils;
-import cn.keking.utils.FileUtils;
-import cn.keking.utils.OfficeToPdf;
-import cn.keking.utils.PdfUtils;
+import cn.keking.utils.*;
 import cn.keking.watermarkprocessor.WatermarkException;
 import cn.keking.watermarkprocessor.WatermarkProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +27,11 @@ public class OfficeFilePreviewImpl implements FilePreview {
     @Value("${wartermark.text}")
     private String wartermarkText;
 
-    @Value("${wartermark.imagepath}")
-    private String wartermarkImagePath;
+    @Value("${wartermark.winimagepath}")
+    private String wartermarkWinImagePath;
+
+    @Value("${wartermark.linuximagepath}")
+    private String wartermarkLinuxImagePath;
 
     @Autowired
     FileUtils fileUtils;
@@ -87,22 +87,26 @@ public class OfficeFilePreviewImpl implements FilePreview {
                 return "fileNotSupported";
             }
             filePath = response.getContent();
-            if (isHtml){
-                File file = new File(filePath);
-                WatermarkProcessor.process(file, "万达信息专有");
-            }
             if (StringUtils.hasText(outFilePath)) {
                 //fixme 完成office转PDF
                 officeToPdf.openOfficeToPDF(filePath, outFilePath);
                 /**
                  * 转换成pdf后处理并添加水印
                  */
-                System.out.println(wartermarkImagePath);
+                System.out.println(wartermarkWinImagePath);
                 if(!isHtml){
-                    File file = new File(outFilePath);
-                    File imageFile = new File(wartermarkImagePath);
-                    WatermarkProcessor.process(file, wartermarkText);
-                    WatermarkProcessor.process(file,imageFile);
+                    if(!SystemTypeUtils.isOSLinux()){
+                        File file = new File(outFilePath);
+                        File imageFile = new File(wartermarkWinImagePath);
+                        WatermarkProcessor.process(file, wartermarkText);
+                        WatermarkProcessor.process(file,imageFile);
+                    } else {
+                        File file = new File(outFilePath);
+                        File imageFile = new File(wartermarkLinuxImagePath);
+                        WatermarkProcessor.process(file, wartermarkText);
+                        WatermarkProcessor.process(file,imageFile);
+                    }
+
                 }
 
                 if (isHtml) {

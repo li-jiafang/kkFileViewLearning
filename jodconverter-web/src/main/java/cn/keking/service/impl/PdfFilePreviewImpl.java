@@ -7,6 +7,7 @@ import cn.keking.service.FilePreview;
 import cn.keking.utils.DownloadUtils;
 import cn.keking.utils.FileUtils;
 import cn.keking.utils.PdfUtils;
+import cn.keking.utils.SystemTypeUtils;
 import cn.keking.watermarkprocessor.WatermarkException;
 import cn.keking.watermarkprocessor.WatermarkProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,11 @@ public class PdfFilePreviewImpl implements FilePreview{
     @Value("${wartermark.text}")
     private String wartermarkText;
 
-    @Value("${wartermark.imagepath}")
-    private String wartermarkImagePath;
+    @Value("${wartermark.winimagepath}")
+    private String wartermarkWinImagePath;
+
+    @Value("${wartermark.linuximagepath}")
+    private String wartermarkLinuxImagePath;
 
     @Autowired
     FileUtils fileUtils;
@@ -54,10 +58,17 @@ public class PdfFilePreviewImpl implements FilePreview{
         if (OfficeFilePreviewImpl.OFFICE_PREVIEW_TYPE_IMAGE.equals(officePreviewType) || OfficeFilePreviewImpl.OFFICE_PREVIEW_TYPE_ALLIMAGES.equals(officePreviewType)) {
             //当文件不存在时，就去下载
             ReturnResponse<String> response = downloadUtils.downLoad(fileAttribute, fileName);
-            File file = new File(outFilePath);
-            File imageFile = new File(wartermarkImagePath);
-            WatermarkProcessor.process(file, wartermarkText);
-            WatermarkProcessor.process(file,imageFile);
+            if(!SystemTypeUtils.isOSLinux()){
+                File file = new File(outFilePath);
+                File imageFile = new File(wartermarkWinImagePath);
+                WatermarkProcessor.process(file, wartermarkText);
+                WatermarkProcessor.process(file,imageFile);
+            } else {
+                File file = new File(outFilePath);
+                File imageFile = new File(wartermarkLinuxImagePath);
+                WatermarkProcessor.process(file, wartermarkText);
+                WatermarkProcessor.process(file,imageFile);
+            }
             if (0 != response.getCode()) {
                 model.addAttribute("fileType", suffix);
                 model.addAttribute("msg", response.getMsg());

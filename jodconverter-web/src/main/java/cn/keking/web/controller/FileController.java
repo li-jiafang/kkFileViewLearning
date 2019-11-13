@@ -46,7 +46,7 @@ public class FileController {
     @RequestMapping(value = "fileUpload", method = RequestMethod.POST)
     public String fileUpload(@RequestParam("file") MultipartFile file,
                              HttpServletRequest request) throws JsonProcessingException {
-        LOGGER.info("FileController--->fileUpload--->file:"+file);
+        LOGGER.info("FileController--->fileUpload--->上传文件file:"+file);
         // 获取文件名
         String fileName = file.getOriginalFilename();
         //判断是否为IE浏览器的文件名，IE浏览器下文件名会带有盘符信息
