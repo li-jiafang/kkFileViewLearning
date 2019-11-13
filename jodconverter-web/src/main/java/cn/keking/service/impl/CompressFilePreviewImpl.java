@@ -14,7 +14,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * Created by kl on 2018/1/17.
- * Content :处理压缩包文件
+ * Content :处理压缩包文件 本项目展示弃用
  */
 @Service
 public class CompressFilePreviewImpl implements FilePreview{

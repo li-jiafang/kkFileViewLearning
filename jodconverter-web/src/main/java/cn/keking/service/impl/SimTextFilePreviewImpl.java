@@ -15,7 +15,7 @@ import java.nio.file.Files;
 
 /**
  * Created by kl on 2018/1/17.
- * Content :处理文本文件
+ * Content :处理文本文件  本项目展示弃用
  */
 @Service
 public class SimTextFilePreviewImpl implements FilePreview{

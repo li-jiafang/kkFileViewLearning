@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * Created by kl on 2018/1/17.
- * Content :图片文件处理
+ * Content :图片文件处理 本项目展示弃用
  */
 @Service
 public class PictureFilePreviewImpl implements FilePreview {
