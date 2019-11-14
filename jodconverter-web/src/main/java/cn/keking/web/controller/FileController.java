@@ -81,10 +81,10 @@ public class FileController {
             while ((-1 != (len = in.read(buffer)))) {
                 ot.write(buffer, 0, len);
             }
-            return new ObjectMapper().writeValueAsString(new ReturnResponse<String>(0, "SUCCESS", null));
+            return new ObjectMapper().writeValueAsString(new ReturnResponse<String>(0, "SUCCESS", fileName));
         } catch (IOException e) {
             e.printStackTrace();
-            return new ObjectMapper().writeValueAsString(new ReturnResponse<String>(1, "FAILURE", null));
+            return new ObjectMapper().writeValueAsString(new ReturnResponse<String>(1, "FAILURE", fileName));
         }
     }
 
