@@ -46,7 +46,7 @@ public class FileController {
     @RequestMapping(value = "fileUpload", method = RequestMethod.POST)
     public String fileUpload(@RequestParam("file") MultipartFile file,
                              HttpServletRequest request) throws JsonProcessingException {
-        LOGGER.info("FileController--->fileUpload--->上传文件file:"+file);
+        LOGGER.info("fileUpload--->上传文件file名字:"+file.getOriginalFilename());
         // 获取文件名
         String fileName = file.getOriginalFilename();
         //判断是否为IE浏览器的文件名，IE浏览器下文件名会带有盘符信息
@@ -70,6 +70,7 @@ public class FileController {
          * 将上传的文件存储到outFile，通过文件流的方式写入到这个文件夹下
          */
         File outFile = new File(fileDir + demoPath);
+        LOGGER.info("fileUpload--->上传文件outFile路径:"+outFile);
         if (!outFile.exists()) {
             outFile.mkdirs();
         }
@@ -113,6 +114,8 @@ public class FileController {
         if (file.exists()) {
             Arrays.stream(file.listFiles()).forEach(file1 -> list.add(ImmutableMap.of("fileName", demoDir + "/" + file1.getName())));
         }
+        LOGGER.info("listFiles--->上传文件路径:"+file);
+        LOGGER.info("listFiles--->上传文件list列表:"+list);
         return new ObjectMapper().writeValueAsString(list);
     }
 

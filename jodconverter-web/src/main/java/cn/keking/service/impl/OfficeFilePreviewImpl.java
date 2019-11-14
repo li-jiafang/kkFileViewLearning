@@ -7,6 +7,9 @@ import cn.keking.service.FilePreview;
 import cn.keking.utils.*;
 import cn.keking.watermarkprocessor.WatermarkException;
 import cn.keking.watermarkprocessor.WatermarkProcessor;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -47,6 +50,8 @@ public class OfficeFilePreviewImpl implements FilePreview {
 
     String fileDir = ConfigConstants.getFileDir();
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(OfficeFilePreviewImpl.class);
+
     public static final String OFFICE_PREVIEW_TYPE_PDF = "pdf";
     public static final String OFFICE_PREVIEW_TYPE_IMAGE = "image";
     public static final String OFFICE_PREVIEW_TYPE_ALLIMAGES = "allImages";
@@ -63,6 +68,7 @@ public class OfficeFilePreviewImpl implements FilePreview {
          * fileName = 测试1 - 副本 (9).docx
          */
         String officePreviewType = model.asMap().get("officePreviewType") == null ? ConfigConstants.getOfficePreviewType() : model.asMap().get("officePreviewType").toString();
+        LOGGER.info("filePreviewHandle--->officePreviewType:"+officePreviewType);
         /*if (OFFICE_PREVIEW_TYPE_ALLIMAGES.equals(officePreviewType)){
             return null;
         }*/
@@ -77,6 +83,7 @@ public class OfficeFilePreviewImpl implements FilePreview {
          *  outFilePath是pdf生成后的文件路径
           */
         String outFilePath = fileDir + pdfName;
+        LOGGER.info("filePreviewHandle--->outFilePath:"+outFilePath);
         // 通过redis缓存之前转换过的文件，然后判断是否已转换过，如果转换过，直接返回，否则执行转换
         if (!fileUtils.listConvertedFiles().containsKey(pdfName) || !ConfigConstants.isCacheEnabled()) {
             String filePath = fileDir + fileName;
@@ -93,14 +100,17 @@ public class OfficeFilePreviewImpl implements FilePreview {
                 /**
                  * 转换成pdf后处理并添加水印
                  */
+
                 System.out.println(wartermarkWinImagePath);
                 if(!isHtml){
                     if(!SystemTypeUtils.isOSLinux()){
+                        LOGGER.info("filePreviewHandle--->wartermarkWinImagePath:"+wartermarkWinImagePath);
                         File file = new File(outFilePath);
                         File imageFile = new File(wartermarkWinImagePath);
                         WatermarkProcessor.process(file, wartermarkText);
                         WatermarkProcessor.process(file,imageFile);
                     } else {
+                        LOGGER.info("filePreviewHandle--->wartermarkLinuxImagePath:"+wartermarkLinuxImagePath);
                         File file = new File(outFilePath);
                         File imageFile = new File(wartermarkLinuxImagePath);
                         WatermarkProcessor.process(file, wartermarkText);
@@ -124,6 +134,7 @@ public class OfficeFilePreviewImpl implements FilePreview {
         if (!isHtml && baseUrl != null && (OFFICE_PREVIEW_TYPE_IMAGE.equals(officePreviewType) || OFFICE_PREVIEW_TYPE_ALLIMAGES.equals(officePreviewType))) {
             // imageUrls = http://127.0.0.1:8012/测试1 - 副本 (9)/0.jpg
             List<String> imageUrls = pdfUtils.pdf2jpg(outFilePath, pdfName, baseUrl);
+            LOGGER.info("filePreviewHandle--->imageUrls:"+imageUrls);
             if (imageUrls == null || imageUrls.size() < 1) {
                 model.addAttribute("msg", "office转图片异常，请联系管理员");
                 model.addAttribute("fileType",fileAttribute.getSuffix());
@@ -142,8 +153,5 @@ public class OfficeFilePreviewImpl implements FilePreview {
         return isHtml ? "html" : "pdf";
     }
 
-    /**
-     * 完成给PDF添加水印
-     */
 
 }

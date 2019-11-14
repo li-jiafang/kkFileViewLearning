@@ -106,6 +106,7 @@ public class CacheServiceRocksDBImpl implements CacheService {
         } catch (RocksDBException | IOException | ClassNotFoundException e) {
             LOGGER.error("Get from RocksDB Exception" + e);
         }
+        LOGGER.info("Map<String, String> getPDFCache()-->result"+result);
         return result;
     }
 
@@ -129,6 +130,7 @@ public class CacheServiceRocksDBImpl implements CacheService {
         } catch (RocksDBException | IOException | ClassNotFoundException e) {
             LOGGER.error("Get from RocksDB Exception" + e);
         }
+        LOGGER.info("Map<String, List<String>> getImgCache()-->result"+result);
         return result;
     }
 
@@ -142,6 +144,7 @@ public class CacheServiceRocksDBImpl implements CacheService {
         } catch (RocksDBException | IOException | ClassNotFoundException e) {
             LOGGER.error("Get from RocksDB Exception" + e);
         }
+        LOGGER.info("getImgCache-->result"+result);
         return result;
     }
 
@@ -152,6 +155,7 @@ public class CacheServiceRocksDBImpl implements CacheService {
         } catch (RocksDBException | IOException | ClassNotFoundException e) {
             LOGGER.error("Get from RocksDB Exception" + e);
         }
+        LOGGER.info("getPdfImageCaches-->map"+map);
         return map;
     }
 
@@ -165,6 +169,7 @@ public class CacheServiceRocksDBImpl implements CacheService {
         } catch (RocksDBException | IOException | ClassNotFoundException e) {
             LOGGER.error("Get from RocksDB Exception" + e);
         }
+        LOGGER.info("Integer getPdfImageCache(String key)-->result"+result);
         return result;
     }
 

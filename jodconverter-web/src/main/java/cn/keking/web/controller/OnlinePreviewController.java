@@ -12,6 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,6 +59,7 @@ public class OnlinePreviewController {
          * 传入url=http://127.0.0.1:8012/demo/测试1 - 副本 (9).docx
          */
         FileAttribute fileAttribute = fileUtils.getFileAttribute(url);
+        LOGGER.info("onlinePreview-->fileAttribute 的属性:"+fileAttribute);
         /**
          * fileAttribute 的所有属性
          * type = office
@@ -68,11 +70,13 @@ public class OnlinePreviewController {
          */
         req.setAttribute("fileKey", req.getParameter("fileKey"));
         model.addAttribute("officePreviewType", req.getParameter("officePreviewType"));
+        LOGGER.info("onlinePreview-->model 的属性:"+model);
         /**
          * 已经解析过的文件
          * req.getParameter("fileKey")和req.getParameter("officePreviewType")为null
          */
         FilePreview filePreview = previewFactory.get(fileAttribute);
+        LOGGER.info("onlinePreview-->filePreview 的属性:"+filePreview);
         return filePreview.filePreviewHandle(url, model, fileAttribute);
     }
 
@@ -131,6 +135,8 @@ public class OnlinePreviewController {
     @ResponseBody
     public String addQueueTask(String url) {
         cacheService.addQueueTask(url);
+        LOGGER.error("cacheService注入bean不明确");
+        LOGGER.info("cacheService注入bean不明确");
         return "success";
     }
 
