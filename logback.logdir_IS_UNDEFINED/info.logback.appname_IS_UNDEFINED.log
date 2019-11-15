@@ -1,0 +1,93 @@
+2019-11-08 15:53:15,453 [main] INFO  cn.keking.FilePreviewApplication 48 - Starting FilePreviewApplication on DESKTOP-32DIASK with PID 6288 (E:\WondersGroup\OnlinePreviewOfOfficeDocuments\kkFileView\jodconverter-web\target\classes started by 26039 in E:\WondersGroup\OnlinePreviewOfOfficeDocuments\kkFileView)
+2019-11-08 15:53:15,456 [main] INFO  cn.keking.FilePreviewApplication 593 - No active profile set, falling back to default profiles: default
+2019-11-08 15:53:15,487 [main] INFO  o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext 583 - Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@a4add54: startup date [Fri Nov 08 15:53:15 CST 2019]; root of context hierarchy
+2019-11-08 15:53:15,581 [background-preinit] INFO  o.h.validator.internal.util.Version 30 - HV000001: Hibernate Validator 5.3.5.Final
+2019-11-08 15:53:16,373 [main] INFO  o.s.b.c.e.t.TomcatEmbeddedServletContainer 89 - Tomcat initialized with port(s): 8012 (http)
+2019-11-08 15:53:16,379 [main] INFO  o.a.catalina.core.StandardService 179 - Starting service [Tomcat]
+2019-11-08 15:53:16,380 [main] INFO  o.a.catalina.core.StandardEngine 179 - Starting Servlet Engine: Apache Tomcat/8.5.23
+2019-11-08 15:53:16,499 [localhost-startStop-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] 179 - Initializing Spring embedded WebApplicationContext
+2019-11-08 15:53:16,499 [localhost-startStop-1] INFO  o.s.web.context.ContextLoader 276 - Root WebApplicationContext: initialization completed in 1012 ms
+2019-11-08 15:53:16,666 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean 258 - Mapping filter: 'characterEncodingFilter' to: [/*]
+2019-11-08 15:53:16,667 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean 258 - Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+2019-11-08 15:53:16,667 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean 258 - Mapping filter: 'httpPutFormContentFilter' to: [/*]
+2019-11-08 15:53:16,667 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean 258 - Mapping filter: 'requestContextFilter' to: [/*]
+2019-11-08 15:53:16,667 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean 258 - Mapping filter: 'chinesePathFilter' to: [/*]
+2019-11-08 15:53:16,667 [localhost-startStop-1] INFO  o.s.b.w.s.ServletRegistrationBean 190 - Mapping servlet: 'dispatcherServlet' to [/]
+2019-11-08 15:53:16,955 [main] INFO  c.keking.service.FileConverQueueTask 39 - 队列处理文件转换任务启动完成 
+2019-11-08 15:53:17,005 [main] INFO  o.a.j.o.ProcessPoolOfficeManager 51 - ProcessManager implementation is PureJavaProcessManager
+2019-11-08 15:53:17,006 [OfficeProcessThread-0] INFO  o.a.j.office.OfficeProcess 86 - starting process with acceptString 'socket,host=127.0.0.1,port=8100,tcpNoDelay=1' and profileDir 'C:\Users\26039\AppData\Local\Temp\.jodconverter_socket_host-127.0.0.1_port-8100'
+2019-11-08 15:53:17,010 [OfficeProcessThread-0] INFO  o.a.j.office.OfficeProcess 93 - started process
+2019-11-08 15:53:18,080 [OfficeProcessThread-0] INFO  o.a.j.office.OfficeConnection 88 - connected: 'socket,host=127.0.0.1,port=8100,tcpNoDelay=1'
+2019-11-08 15:53:18,407 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerAdapter 534 - Looking for @ControllerAdvice: org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@a4add54: startup date [Fri Nov 08 15:53:15 CST 2019]; root of context hierarchy
+2019-11-08 15:53:18,451 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/listFiles],methods=[GET]}" onto public java.lang.String cn.keking.web.controller.FileController.getFiles() throws com.fasterxml.jackson.core.JsonProcessingException
+2019-11-08 15:53:18,453 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/deleteFile],methods=[GET]}" onto public java.lang.String cn.keking.web.controller.FileController.deleteFile(java.lang.String) throws com.fasterxml.jackson.core.JsonProcessingException
+2019-11-08 15:53:18,453 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/fileUpload],methods=[POST]}" onto public java.lang.String cn.keking.web.controller.FileController.fileUpload(org.springframework.web.multipart.MultipartFile,javax.servlet.http.HttpServletRequest) throws com.fasterxml.jackson.core.JsonProcessingException
+2019-11-08 15:53:18,453 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/],methods=[GET]}" onto public java.lang.String cn.keking.web.controller.IndexController.root()
+2019-11-08 15:53:18,454 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/index],methods=[GET]}" onto public java.lang.String cn.keking.web.controller.IndexController.go2Index()
+2019-11-08 15:53:18,455 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/addTask],methods=[GET]}" onto public java.lang.String cn.keking.web.controller.OnlinePreviewController.addQueueTask(java.lang.String)
+2019-11-08 15:53:18,455 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/getCorsFile],methods=[GET]}" onto public void cn.keking.web.controller.OnlinePreviewController.getCorsFile(java.lang.String,javax.servlet.http.HttpServletResponse)
+2019-11-08 15:53:18,455 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/onlinePreview],methods=[GET]}" onto public java.lang.String cn.keking.web.controller.OnlinePreviewController.onlinePreview(java.lang.String,org.springframework.ui.Model,javax.servlet.http.HttpServletRequest)
+2019-11-08 15:53:18,455 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/picturesPreview]}" onto public java.lang.String cn.keking.web.controller.OnlinePreviewController.picturesPreview(org.springframework.ui.Model,javax.servlet.http.HttpServletRequest) throws java.io.UnsupportedEncodingException
+2019-11-08 15:53:18,457 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2019-11-08 15:53:18,457 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2019-11-08 15:53:18,483 [main] INFO  cn.keking.config.WebConfig 24 - Add resource locations: E:\WondersGroup\OnlinePreviewOfOfficeDocuments\kkFileView\jodconverter-web\src\main\file\
+2019-11-08 15:53:18,496 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping 362 - Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2019-11-08 15:53:18,496 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping 362 - Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2019-11-08 15:53:18,541 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping 362 - Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2019-11-08 15:53:18,697 [main] INFO  o.s.w.s.v.f.FreeMarkerConfigurer 127 - ClassTemplateLoader for Spring macros added to FreeMarker configuration
+2019-11-08 15:53:18,876 [main] INFO  o.s.j.e.a.AnnotationMBeanExporter 431 - Registering beans for JMX exposure on startup
+2019-11-08 15:53:18,886 [main] INFO  o.s.s.a.ScheduledAnnotationBeanPostProcessor 262 - No TaskScheduler/ScheduledExecutorService bean found for scheduled processing
+2019-11-08 15:53:18,895 [main] INFO  o.a.coyote.http11.Http11NioProtocol 179 - Initializing ProtocolHandler ["http-nio-8012"]
+2019-11-08 15:53:18,906 [main] INFO  o.a.coyote.http11.Http11NioProtocol 179 - Starting ProtocolHandler ["http-nio-8012"]
+2019-11-08 15:53:18,916 [main] INFO  o.a.tomcat.util.net.NioSelectorPool 179 - Using a shared selector for servlet write/read
+2019-11-08 15:53:18,934 [main] INFO  o.s.b.c.e.t.TomcatEmbeddedServletContainer 201 - Tomcat started on port(s): 8012 (http)
+2019-11-08 15:53:18,938 [main] INFO  cn.keking.FilePreviewApplication 57 - Started FilePreviewApplication in 3.962 seconds (JVM running for 5.287)
+2019-11-08 15:53:32,038 [Thread-13] INFO  o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext 984 - Closing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@a4add54: startup date [Fri Nov 08 15:53:15 CST 2019]; root of context hierarchy
+2019-11-08 15:53:32,040 [Thread-13] INFO  o.s.j.e.a.AnnotationMBeanExporter 449 - Unregistering JMX-exposed beans on shutdown
+2019-11-08 15:53:38,817 [main] INFO  cn.keking.FilePreviewApplication 48 - Starting FilePreviewApplication on DESKTOP-32DIASK with PID 9612 (E:\WondersGroup\OnlinePreviewOfOfficeDocuments\kkFileView\jodconverter-web\target\classes started by 26039 in E:\WondersGroup\OnlinePreviewOfOfficeDocuments\kkFileView)
+2019-11-08 15:53:38,821 [main] INFO  cn.keking.FilePreviewApplication 593 - No active profile set, falling back to default profiles: default
+2019-11-08 15:53:38,866 [main] INFO  o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext 583 - Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@4278284b: startup date [Fri Nov 08 15:53:38 CST 2019]; root of context hierarchy
+2019-11-08 15:53:38,983 [background-preinit] INFO  o.h.validator.internal.util.Version 30 - HV000001: Hibernate Validator 5.3.5.Final
+2019-11-08 15:53:39,791 [main] INFO  o.s.b.c.e.t.TomcatEmbeddedServletContainer 89 - Tomcat initialized with port(s): 8012 (http)
+2019-11-08 15:53:39,798 [main] INFO  o.a.catalina.core.StandardService 179 - Starting service [Tomcat]
+2019-11-08 15:53:39,798 [main] INFO  o.a.catalina.core.StandardEngine 179 - Starting Servlet Engine: Apache Tomcat/8.5.23
+2019-11-08 15:53:39,917 [localhost-startStop-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] 179 - Initializing Spring embedded WebApplicationContext
+2019-11-08 15:53:39,917 [localhost-startStop-1] INFO  o.s.web.context.ContextLoader 276 - Root WebApplicationContext: initialization completed in 1051 ms
+2019-11-08 15:53:40,091 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean 258 - Mapping filter: 'characterEncodingFilter' to: [/*]
+2019-11-08 15:53:40,091 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean 258 - Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+2019-11-08 15:53:40,091 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean 258 - Mapping filter: 'httpPutFormContentFilter' to: [/*]
+2019-11-08 15:53:40,091 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean 258 - Mapping filter: 'requestContextFilter' to: [/*]
+2019-11-08 15:53:40,091 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean 258 - Mapping filter: 'chinesePathFilter' to: [/*]
+2019-11-08 15:53:40,091 [localhost-startStop-1] INFO  o.s.b.w.s.ServletRegistrationBean 190 - Mapping servlet: 'dispatcherServlet' to [/]
+2019-11-08 15:53:40,467 [main] INFO  c.keking.service.FileConverQueueTask 39 - 队列处理文件转换任务启动完成 
+2019-11-08 15:53:40,524 [main] INFO  o.a.j.o.ProcessPoolOfficeManager 51 - ProcessManager implementation is PureJavaProcessManager
+2019-11-08 15:53:40,526 [OfficeProcessThread-0] WARN  o.a.j.office.OfficeProcess 103 - profile dir 'C:\Users\26039\AppData\Local\Temp\.jodconverter_socket_host-127.0.0.1_port-8100' already exists; deleting
+2019-11-08 15:53:40,604 [OfficeProcessThread-0] INFO  o.a.j.office.OfficeProcess 86 - starting process with acceptString 'socket,host=127.0.0.1,port=8100,tcpNoDelay=1' and profileDir 'C:\Users\26039\AppData\Local\Temp\.jodconverter_socket_host-127.0.0.1_port-8100'
+2019-11-08 15:53:40,606 [OfficeProcessThread-0] INFO  o.a.j.office.OfficeProcess 93 - started process
+2019-11-08 15:53:41,675 [OfficeProcessThread-0] INFO  o.a.j.office.OfficeConnection 88 - connected: 'socket,host=127.0.0.1,port=8100,tcpNoDelay=1'
+2019-11-08 15:53:41,950 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerAdapter 534 - Looking for @ControllerAdvice: org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@4278284b: startup date [Fri Nov 08 15:53:38 CST 2019]; root of context hierarchy
+2019-11-08 15:53:41,993 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/fileUpload],methods=[POST]}" onto public java.lang.String cn.keking.web.controller.FileController.fileUpload(org.springframework.web.multipart.MultipartFile,javax.servlet.http.HttpServletRequest) throws com.fasterxml.jackson.core.JsonProcessingException
+2019-11-08 15:53:41,994 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/deleteFile],methods=[GET]}" onto public java.lang.String cn.keking.web.controller.FileController.deleteFile(java.lang.String) throws com.fasterxml.jackson.core.JsonProcessingException
+2019-11-08 15:53:41,994 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/listFiles],methods=[GET]}" onto public java.lang.String cn.keking.web.controller.FileController.getFiles() throws com.fasterxml.jackson.core.JsonProcessingException
+2019-11-08 15:53:41,994 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/],methods=[GET]}" onto public java.lang.String cn.keking.web.controller.IndexController.root()
+2019-11-08 15:53:41,994 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/index],methods=[GET]}" onto public java.lang.String cn.keking.web.controller.IndexController.go2Index()
+2019-11-08 15:53:41,996 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/addTask],methods=[GET]}" onto public java.lang.String cn.keking.web.controller.OnlinePreviewController.addQueueTask(java.lang.String)
+2019-11-08 15:53:41,996 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/getCorsFile],methods=[GET]}" onto public void cn.keking.web.controller.OnlinePreviewController.getCorsFile(java.lang.String,javax.servlet.http.HttpServletResponse)
+2019-11-08 15:53:41,996 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/onlinePreview],methods=[GET]}" onto public java.lang.String cn.keking.web.controller.OnlinePreviewController.onlinePreview(java.lang.String,org.springframework.ui.Model,javax.servlet.http.HttpServletRequest)
+2019-11-08 15:53:41,996 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/picturesPreview]}" onto public java.lang.String cn.keking.web.controller.OnlinePreviewController.picturesPreview(org.springframework.ui.Model,javax.servlet.http.HttpServletRequest) throws java.io.UnsupportedEncodingException
+2019-11-08 15:53:41,997 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2019-11-08 15:53:41,998 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 - Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2019-11-08 15:53:42,023 [main] INFO  cn.keking.config.WebConfig 24 - Add resource locations: E:\WondersGroup\OnlinePreviewOfOfficeDocuments\kkFileView\jodconverter-web\src\main\file\
+2019-11-08 15:53:42,035 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping 362 - Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2019-11-08 15:53:42,036 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping 362 - Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2019-11-08 15:53:42,078 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping 362 - Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2019-11-08 15:53:42,226 [main] INFO  o.s.w.s.v.f.FreeMarkerConfigurer 127 - ClassTemplateLoader for Spring macros added to FreeMarker configuration
+2019-11-08 15:53:42,363 [main] INFO  o.s.j.e.a.AnnotationMBeanExporter 431 - Registering beans for JMX exposure on startup
+2019-11-08 15:53:42,374 [main] INFO  o.s.s.a.ScheduledAnnotationBeanPostProcessor 262 - No TaskScheduler/ScheduledExecutorService bean found for scheduled processing
+2019-11-08 15:53:42,383 [main] INFO  o.a.coyote.http11.Http11NioProtocol 179 - Initializing ProtocolHandler ["http-nio-8012"]
+2019-11-08 15:53:42,395 [main] INFO  o.a.coyote.http11.Http11NioProtocol 179 - Starting ProtocolHandler ["http-nio-8012"]
+2019-11-08 15:53:42,405 [main] INFO  o.a.tomcat.util.net.NioSelectorPool 179 - Using a shared selector for servlet write/read
+2019-11-08 15:53:42,421 [main] INFO  o.s.b.c.e.t.TomcatEmbeddedServletContainer 201 - Tomcat started on port(s): 8012 (http)
+2019-11-08 15:53:42,424 [main] INFO  cn.keking.FilePreviewApplication 57 - Started FilePreviewApplication in 3.986 seconds (JVM running for 4.993)
+2019-11-08 15:54:15,032 [Thread-12] INFO  o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext 984 - Closing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@4278284b: startup date [Fri Nov 08 15:53:38 CST 2019]; root of context hierarchy
+2019-11-08 15:54:15,034 [Thread-12] INFO  o.s.j.e.a.AnnotationMBeanExporter 449 - Unregistering JMX-exposed beans on shutdown
