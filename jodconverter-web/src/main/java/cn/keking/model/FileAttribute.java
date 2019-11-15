@@ -16,6 +16,8 @@ public class FileAttribute {
 
     private String decodedUrl;
 
+    private String fileMD5;  // 上传文件的md5值
+
     public FileAttribute() {
     }
 
@@ -26,6 +28,15 @@ public class FileAttribute {
         this.url = url;
         this.decodedUrl = decodedUrl;
     }
+
+    public String getFileMD5() {
+        return fileMD5;
+    }
+
+    public void setFileMD5(String fileMD5) {
+        this.fileMD5 = fileMD5;
+    }
+
 
     public FileType getType() {
         return type;

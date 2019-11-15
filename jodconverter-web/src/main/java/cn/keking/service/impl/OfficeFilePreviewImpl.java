@@ -153,5 +153,10 @@ public class OfficeFilePreviewImpl implements FilePreview {
         return isHtml ? "html" : "pdf";
     }
 
+    @Override
+    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute) throws WatermarkException {
+        return null;
+    }
+
 
 }

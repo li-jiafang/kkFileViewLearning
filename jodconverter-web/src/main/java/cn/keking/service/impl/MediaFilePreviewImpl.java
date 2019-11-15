@@ -3,9 +3,13 @@ package cn.keking.service.impl;
 import cn.keking.model.FileAttribute;
 import cn.keking.service.FilePreview;
 import cn.keking.utils.FileUtils;
+import cn.keking.watermarkprocessor.WatermarkException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+
+import java.util.List;
+
 /**
  * @author : kl
  * @authorboke : kailing.pub
@@ -26,6 +30,11 @@ public class MediaFilePreviewImpl implements FilePreview {
             return "flv";
         }
         return "media";
+    }
+
+    @Override
+    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute) throws WatermarkException {
+        return null;
     }
 
 

@@ -3,6 +3,7 @@ package cn.keking.service.impl;
 import cn.keking.model.FileAttribute;
 import cn.keking.service.FilePreview;
 import cn.keking.utils.FileUtils;
+import cn.keking.watermarkprocessor.WatermarkException;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,5 +35,10 @@ public class PictureFilePreviewImpl implements FilePreview {
         model.addAttribute("imgurls", imgUrls);
         model.addAttribute("currentUrl",url);
         return "picture";
+    }
+
+    @Override
+    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute) throws WatermarkException {
+        return null;
     }
 }

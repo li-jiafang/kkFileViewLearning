@@ -100,4 +100,9 @@ public class PdfFilePreviewImpl implements FilePreview{
         }
         return "pdf";
     }
+
+    @Override
+    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute) throws WatermarkException {
+        return null;
+    }
 }

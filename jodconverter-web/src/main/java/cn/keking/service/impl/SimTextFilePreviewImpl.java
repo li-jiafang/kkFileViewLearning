@@ -5,6 +5,7 @@ import cn.keking.model.ReturnResponse;
 import cn.keking.service.FilePreview;
 import cn.keking.utils.FileUtils;
 import cn.keking.utils.SimTextUtil;
+import cn.keking.watermarkprocessor.WatermarkException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.ui.Model;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 
 /**
  * Created by kl on 2018/1/17.
@@ -50,6 +52,11 @@ public class SimTextFilePreviewImpl implements FilePreview{
         }
         model.addAttribute("ordinaryUrl", response.getMsg() + ".txt");
         return "txt";
+    }
+
+    @Override
+    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute) throws WatermarkException {
+        return null;
     }
 
 }

@@ -7,10 +7,13 @@ import cn.keking.service.FilePreview;
 import cn.keking.utils.DownloadUtils;
 import cn.keking.utils.FileUtils;
 import cn.keking.utils.ZipReader;
+import cn.keking.watermarkprocessor.WatermarkException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 /**
  * Created by kl on 2018/1/17.
@@ -63,5 +66,10 @@ public class CompressFilePreviewImpl implements FilePreview{
             model.addAttribute("msg", "压缩文件类型不受支持，尝试在压缩的时候选择RAR4格式");
             return "fileNotSupported";
         }
+    }
+
+    @Override
+    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute) throws WatermarkException {
+        return null;
     }
 }
