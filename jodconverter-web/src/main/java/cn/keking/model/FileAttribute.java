@@ -18,6 +18,16 @@ public class FileAttribute {
 
     private String fileMD5;  // 上传文件的md5值
 
+    private String filePath;  // 上传后文件的路径
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
     public FileAttribute() {
     }
 

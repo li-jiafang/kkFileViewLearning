@@ -42,7 +42,7 @@ public class FileParsingController {
     @Autowired
     FilePreviewFactory previewFactory;
 
-//    @Value("${base.url}")
+    @Value("${base.url}")
     private String baseUrl;
 
     String demoDir = "upload";
@@ -54,6 +54,7 @@ public class FileParsingController {
      * @param req
      * @return
      * @throws JsonProcessingException
+     * @RequestParam("imgfile") MultipartFile imgfile,
      */
     @RequestMapping(value = "fileSynchronousUpload", method = RequestMethod.POST)
     public List<String> fileSynchronousUpload(@RequestParam("file") MultipartFile file,
@@ -64,20 +65,24 @@ public class FileParsingController {
         /**
          * 读取新路径下的文件并开始解析文件类型
          */
-        String url = baseUrl+demoPath+fileName;
+        String url = baseUrl+"\\"+demoPath+fileName;
         FileAttribute fileAttribute = fileUtils.getFileAttribute(url);
-        // 获取文件的md5值
+        // 获取文件的md5值 文件内容没有改变则值不变，改变内容则值改变
         fileAttribute.setFileMD5(FileMD5StringUtil.getFileMD5String(file));
-
+        fileAttribute.setName(fileName);
+        fileAttribute.setFilePath(fileDir+demoPath+fileName);  // 获取上传文件的路径
+        fileAttribute.setUrl("");
+        fileAttribute.setDecodedUrl("");
         LOGGER.info("onlinePreview-->fileAttribute 的属性:"+fileAttribute);
         req.setAttribute("fileKey", req.getParameter("fileKey"));
+
         model.addAttribute("officePreviewType", req.getParameter("officePreviewType"));
         LOGGER.info("onlinePreview-->model 的属性:"+model);
 
         FilePreview filePreview = previewFactory.get(fileAttribute);
         LOGGER.info("onlinePreview-->filePreview 的属性:"+filePreview);
-        //List<String> s = filePreview.filePreviewHandleList(url, model, fileAttribute);
-        return new ArrayList<>();
+        List<String> s = filePreview.filePreviewHandleList(url, model, fileAttribute);
+        return s;
 
     }
 

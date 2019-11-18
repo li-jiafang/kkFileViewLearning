@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,6 +56,87 @@ public class OfficeFilePreviewImpl implements FilePreview {
     public static final String OFFICE_PREVIEW_TYPE_PDF = "pdf";
     public static final String OFFICE_PREVIEW_TYPE_IMAGE = "image";
     public static final String OFFICE_PREVIEW_TYPE_ALLIMAGES = "allImages";
+
+
+
+    @Override
+    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute) throws WatermarkException {
+        String officePreviewType = model.asMap().get("officePreviewType") == null ? ConfigConstants.getOfficePreviewType() : model.asMap().get("officePreviewType").toString();
+        LOGGER.info("filePreviewHandle--->officePreviewType:"+officePreviewType);
+        String baseUrl = (String) RequestContextHolder.currentRequestAttributes().getAttribute("baseUrl",0);
+        String suffix=fileAttribute.getSuffix();
+        String fileName=fileAttribute.getName();
+        // 获取文件的md5值
+        String fileMd5 = fileAttribute.getFileMD5();
+        // isHtml 判断是否是xls文件，如果是就转成html页，不是就转成其他模式
+        boolean isHtml = suffix.equalsIgnoreCase("xls") || suffix.equalsIgnoreCase("xlsx");
+        // pdfName = 测试1 - 副本 (9).pdf
+        String pdfName = fileName.substring(0, fileName.lastIndexOf(".") + 1) + (isHtml ? "html" : "pdf");
+        /**
+         * filePath是待解析文件路径
+         */
+        String filePath = fileAttribute.getFilePath();
+
+        /**
+         *  outFilePath是pdf生成后的文件路径
+         */
+        String outFilePath = fileDir +"/pdf/" + pdfName;
+
+        /**
+         * 如果文件名存在，md5相同，则直接读取缓存
+         * fileUtils.listConvertedFiles().containsKey(pdfName) = true
+         */
+        if (!fileUtils.listConvertedFiles().containsKey(pdfName) || !ConfigConstants.isCacheEnabled()) {
+
+            /**
+             * 对上传的文件进行解析转pdf和jpg
+             */
+            if (StringUtils.hasText(outFilePath)) {
+                //fixme 完成office转PDF
+                officeToPdf.openOfficeToPDF(filePath, outFilePath);
+                /**
+                 * 转换成pdf后处理并添加水印
+                 */
+
+            }
+
+
+            /**
+             * 处理完添加到缓存
+             */
+
+
+        }
+        // 对转换过的文件则获取url链接
+        if (!isHtml && baseUrl != null && (OFFICE_PREVIEW_TYPE_IMAGE.equals(officePreviewType) || OFFICE_PREVIEW_TYPE_ALLIMAGES.equals(officePreviewType))) {
+            // imageUrls = http://127.0.0.1:8012/测试1 - 副本 (9)/0.jpg
+            List<String> imageUrls = pdfUtils.pdf2jpg(outFilePath, pdfName, baseUrl);
+            LOGGER.info("filePreviewHandle--->imageUrls:"+imageUrls);
+            if (imageUrls == null || imageUrls.size() < 1) {
+                model.addAttribute("msg", "office转图片异常，请联系管理员");
+                model.addAttribute("fileType",fileAttribute.getSuffix());
+                //return "fileNotSupported";
+                return new ArrayList<>();
+            }
+            model.addAttribute("imgurls", imageUrls);
+            model.addAttribute("currentUrl", imageUrls.get(0));
+            if (OFFICE_PREVIEW_TYPE_IMAGE.equals(officePreviewType)) {
+                //return "officePicture";
+                return new ArrayList<>();
+            } else {
+                //return "officePicture";
+                return new ArrayList<>();
+                //return "picture";
+            }
+        }
+
+
+
+
+
+
+        return null;
+    }
 
     @Override
     public String filePreviewHandle(String url, Model model, FileAttribute fileAttribute) throws WatermarkException {
@@ -153,10 +235,7 @@ public class OfficeFilePreviewImpl implements FilePreview {
         return isHtml ? "html" : "pdf";
     }
 
-    @Override
-    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute) throws WatermarkException {
-        return null;
-    }
+
 
 
 }
