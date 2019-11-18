@@ -35,6 +35,28 @@ public class FileUtils {
 
     String fileDir = ConfigConstants.getFileDir();
 
+
+    /**
+     * 将multipartfile转成file
+     * @param ins
+     * @param file
+     */
+    public static void inputStreamToFile(InputStream ins, File file) {
+        try {
+            OutputStream os = new FileOutputStream(file);
+            int bytesRead = 0;
+            byte[] buffer = new byte[8192];
+            while ((bytesRead = ins.read(buffer, 0, 8192)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            os.close();
+            ins.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     /**
      * 已转换过的文件集合(redis缓存)
      * @return

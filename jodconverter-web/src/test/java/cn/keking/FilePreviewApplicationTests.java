@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
 import java.util.Map;
 
 @RunWith(SpringRunner.class)
@@ -28,6 +29,13 @@ public class FilePreviewApplicationTests {
 		Map<String,String> result = cacheService.getPDFCache();
 		System.out.println(result);
 
+		Map<String, List<String>> imgCache = cacheService.getImgCache();
+		System.out.println(imgCache);
+
+	}
+
+	@Test
+	public void cleanCache(){
 		cacheService.cleanCache();
 	}
 

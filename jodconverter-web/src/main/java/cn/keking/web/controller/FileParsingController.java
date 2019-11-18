@@ -19,9 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
-import java.util.ArrayList;
+
 import java.util.List;
 
 /**
@@ -58,7 +59,9 @@ public class FileParsingController {
      */
     @RequestMapping(value = "fileSynchronousUpload", method = RequestMethod.POST)
     public List<String> fileSynchronousUpload(@RequestParam("file") MultipartFile file,
-                                        Model model, HttpServletRequest req) throws JsonProcessingException, WatermarkException {
+                                              @RequestParam("imgfile") MultipartFile imgfile,
+                                              String watermarkType,String watermarkText,
+                                              Model model, HttpServletRequest req) throws IOException, WatermarkException {
 
         String fileName = saveAndGetFileName(file);
 
@@ -73,6 +76,12 @@ public class FileParsingController {
         fileAttribute.setFilePath(fileDir+demoPath+fileName);  // 获取上传文件的路径
         fileAttribute.setUrl("");
         fileAttribute.setDecodedUrl("");
+        // watermarkType;  水印类型 0 文字 1图片
+        if ("0".equals(watermarkType)){
+            fileAttribute.setWatermarkText(watermarkText);
+        }
+
+
         LOGGER.info("onlinePreview-->fileAttribute 的属性:"+fileAttribute);
         req.setAttribute("fileKey", req.getParameter("fileKey"));
 
@@ -81,7 +90,7 @@ public class FileParsingController {
 
         FilePreview filePreview = previewFactory.get(fileAttribute);
         LOGGER.info("onlinePreview-->filePreview 的属性:"+filePreview);
-        List<String> s = filePreview.filePreviewHandleList(url, model, fileAttribute);
+        List<String> s = filePreview.filePreviewHandleList(url, model, fileAttribute,imgfile);
         return s;
 
     }

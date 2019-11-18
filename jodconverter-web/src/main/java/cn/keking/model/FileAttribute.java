@@ -20,6 +20,17 @@ public class FileAttribute {
 
     private String filePath;  // 上传后文件的路径
 
+    private String watermarkText; // 水印文本
+
+
+    public String getWatermarkText() {
+        return watermarkText;
+    }
+
+    public void setWatermarkText(String watermarkText) {
+        this.watermarkText = watermarkText;
+    }
+
     public String getFilePath() {
         return filePath;
     }

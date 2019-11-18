@@ -9,6 +9,7 @@ import cn.keking.watermarkprocessor.WatermarkException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +56,7 @@ public class SimTextFilePreviewImpl implements FilePreview{
     }
 
     @Override
-    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute) throws WatermarkException {
+    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute, MultipartFile imgFile) throws WatermarkException {
         return null;
     }
 

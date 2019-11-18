@@ -1,5 +1,6 @@
 package cn.keking.utils;
 
+import cn.keking.model.FileAttribute;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -30,10 +31,10 @@ public class PdfUtils {
      * @param baseUrl http://127.0.0.1:8012/
      * @return
      */
-    public List<String> pdf2jpg(String pdfFilePath, String pdfName, String baseUrl) {
+    public List<String> pdf2jpg(String pdfFilePath, String pdfName, String baseUrl, FileAttribute fileAttribute) {
         List<String> imageUrls = new ArrayList<>();
         // 查看缓存中是否存在pdfFilePath路径下已经转换过的图片，如果存在，直接返回该url
-        Integer imageCount = fileUtils.getConvertedPdfImage(pdfFilePath);
+        Integer imageCount = fileUtils.getConvertedPdfImage(pdfFilePath+fileAttribute.getFileMD5());
         String imageFileSuffix = ".jpg";
         /**
          * pdfFolder = pdfFolder
@@ -71,7 +72,10 @@ public class PdfUtils {
                 imageUrls.add(urlPrefix + "/" + pageIndex + imageFileSuffix);
             }
             doc.close();
-            fileUtils.addConvertedPdfImage(pdfFilePath, pageCount);
+            /**
+             * 添加到缓存
+             */
+            fileUtils.addConvertedPdfImage(pdfFilePath+fileAttribute.getFileMD5(), pageCount);
         } catch (IOException e) {
             LOGGER.error("Convert pdf to jpg exception", e);
         }

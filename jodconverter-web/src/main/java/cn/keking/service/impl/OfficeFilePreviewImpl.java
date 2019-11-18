@@ -7,7 +7,6 @@ import cn.keking.service.FilePreview;
 import cn.keking.utils.*;
 import cn.keking.watermarkprocessor.WatermarkException;
 import cn.keking.watermarkprocessor.WatermarkProcessor;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +33,9 @@ public class OfficeFilePreviewImpl implements FilePreview {
 
     @Value("${wartermark.text}")
     private String wartermarkText;
+
+    @Value("${fileOutPathName}")
+    private String fileOutPathName;
 
     @Value("${wartermark.winimagepath}")
     private String wartermarkWinImagePath;
@@ -60,7 +66,7 @@ public class OfficeFilePreviewImpl implements FilePreview {
 
 
     @Override
-    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute) throws WatermarkException {
+    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute, MultipartFile imgFile) throws WatermarkException, IOException {
         String officePreviewType = model.asMap().get("officePreviewType") == null ? ConfigConstants.getOfficePreviewType() : model.asMap().get("officePreviewType").toString();
         LOGGER.info("filePreviewHandle--->officePreviewType:"+officePreviewType);
         String baseUrl = (String) RequestContextHolder.currentRequestAttributes().getAttribute("baseUrl",0);
@@ -74,19 +80,18 @@ public class OfficeFilePreviewImpl implements FilePreview {
         String pdfName = fileName.substring(0, fileName.lastIndexOf(".") + 1) + (isHtml ? "html" : "pdf");
         /**
          * filePath是待解析文件路径
+         * outFilePath是pdf生成后的文件路径
+         * cachefilekey是缓存文件的key
          */
         String filePath = fileAttribute.getFilePath();
-
-        /**
-         *  outFilePath是pdf生成后的文件路径
-         */
-        String outFilePath = fileDir +"/pdf/" + pdfName;
+        String outFilePath = fileDir + fileOutPathName + pdfName;
+        String cachefilekey = pdfName + fileAttribute.getFileMD5();
 
         /**
          * 如果文件名存在，md5相同，则直接读取缓存
          * fileUtils.listConvertedFiles().containsKey(pdfName) = true
          */
-        if (!fileUtils.listConvertedFiles().containsKey(pdfName) || !ConfigConstants.isCacheEnabled()) {
+        if (!fileUtils.listConvertedFiles().containsKey(cachefilekey) || !ConfigConstants.isCacheEnabled()) {
 
             /**
              * 对上传的文件进行解析转pdf和jpg
@@ -94,24 +99,40 @@ public class OfficeFilePreviewImpl implements FilePreview {
             if (StringUtils.hasText(outFilePath)) {
                 //fixme 完成office转PDF
                 officeToPdf.openOfficeToPDF(filePath, outFilePath);
-                /**
-                 * 转换成pdf后处理并添加水印
-                 */
-
             }
-
-
             /**
              * 处理完添加到缓存
              */
-
+            if (ConfigConstants.isCacheEnabled()) {
+                // 加入缓存
+                fileUtils.addConvertedFile(cachefilekey, fileUtils.getRelativePath(outFilePath));
+            }
 
         }
-        // 对转换过的文件则获取url链接
+
+        /**
+         * 转换成pdf后处理并添加水印
+         */
+        File file = new File(outFilePath);
+        if (fileAttribute.getWatermarkText() != null){
+            WatermarkProcessor.process(file,fileAttribute.getWatermarkText());
+        }
+        if (!imgFile.isEmpty() && !isHtml){
+            InputStream ins = imgFile.getInputStream();
+            File imageFile = new File(imgFile.getOriginalFilename());
+            FileUtils.inputStreamToFile(ins, imageFile);
+            WatermarkProcessor.process(file,imageFile);
+            File del = new File(imageFile.toURI());
+            del.delete();
+        }
+        /**
+         * 对pdf文件再次处理获取图片
+         */
         if (!isHtml && baseUrl != null && (OFFICE_PREVIEW_TYPE_IMAGE.equals(officePreviewType) || OFFICE_PREVIEW_TYPE_ALLIMAGES.equals(officePreviewType))) {
             // imageUrls = http://127.0.0.1:8012/测试1 - 副本 (9)/0.jpg
-            List<String> imageUrls = pdfUtils.pdf2jpg(outFilePath, pdfName, baseUrl);
+            List<String> imageUrls = pdfUtils.pdf2jpg(outFilePath, pdfName, baseUrl,fileAttribute);
             LOGGER.info("filePreviewHandle--->imageUrls:"+imageUrls);
+
             if (imageUrls == null || imageUrls.size() < 1) {
                 model.addAttribute("msg", "office转图片异常，请联系管理员");
                 model.addAttribute("fileType",fileAttribute.getSuffix());
@@ -129,12 +150,6 @@ public class OfficeFilePreviewImpl implements FilePreview {
                 //return "picture";
             }
         }
-
-
-
-
-
-
         return null;
     }
 
@@ -215,7 +230,7 @@ public class OfficeFilePreviewImpl implements FilePreview {
         // 对转换过的文件则获取url链接
         if (!isHtml && baseUrl != null && (OFFICE_PREVIEW_TYPE_IMAGE.equals(officePreviewType) || OFFICE_PREVIEW_TYPE_ALLIMAGES.equals(officePreviewType))) {
             // imageUrls = http://127.0.0.1:8012/测试1 - 副本 (9)/0.jpg
-            List<String> imageUrls = pdfUtils.pdf2jpg(outFilePath, pdfName, baseUrl);
+            List<String> imageUrls = pdfUtils.pdf2jpg(outFilePath, pdfName, baseUrl,fileAttribute);
             LOGGER.info("filePreviewHandle--->imageUrls:"+imageUrls);
             if (imageUrls == null || imageUrls.size() < 1) {
                 model.addAttribute("msg", "office转图片异常，请联系管理员");
