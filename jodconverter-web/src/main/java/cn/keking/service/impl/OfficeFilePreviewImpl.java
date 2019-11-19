@@ -17,7 +17,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,7 +91,6 @@ public class OfficeFilePreviewImpl implements FilePreview {
          * fileUtils.listConvertedFiles().containsKey(pdfName) = true
          */
         if (!fileUtils.listConvertedFiles().containsKey(cachefilekey) || !ConfigConstants.isCacheEnabled()) {
-
             /**
              * 对上传的文件进行解析转pdf和jpg
              */
@@ -107,7 +105,6 @@ public class OfficeFilePreviewImpl implements FilePreview {
                 // 加入缓存
                 fileUtils.addConvertedFile(cachefilekey, fileUtils.getRelativePath(outFilePath));
             }
-
         }
 
         /**
@@ -128,11 +125,10 @@ public class OfficeFilePreviewImpl implements FilePreview {
         /**
          * 对pdf文件再次处理获取图片
          */
+        List<String> imageUrls = new ArrayList<>();
         if (!isHtml && baseUrl != null && (OFFICE_PREVIEW_TYPE_IMAGE.equals(officePreviewType) || OFFICE_PREVIEW_TYPE_ALLIMAGES.equals(officePreviewType))) {
-            // imageUrls = http://127.0.0.1:8012/测试1 - 副本 (9)/0.jpg
-            List<String> imageUrls = pdfUtils.pdf2jpg(outFilePath, pdfName, baseUrl,fileAttribute);
+            imageUrls = pdfUtils.pdf2jpg(outFilePath, pdfName, baseUrl,fileAttribute);
             LOGGER.info("filePreviewHandle--->imageUrls:"+imageUrls);
-
             if (imageUrls == null || imageUrls.size() < 1) {
                 model.addAttribute("msg", "office转图片异常，请联系管理员");
                 model.addAttribute("fileType",fileAttribute.getSuffix());
@@ -141,16 +137,16 @@ public class OfficeFilePreviewImpl implements FilePreview {
             }
             model.addAttribute("imgurls", imageUrls);
             model.addAttribute("currentUrl", imageUrls.get(0));
-            if (OFFICE_PREVIEW_TYPE_IMAGE.equals(officePreviewType)) {
-                //return "officePicture";
-                return new ArrayList<>();
-            } else {
-                //return "officePicture";
-                return new ArrayList<>();
-                //return "picture";
-            }
+//            if (OFFICE_PREVIEW_TYPE_IMAGE.equals(officePreviewType)) {
+//                //return "officePicture";
+//                return new ArrayList<>();
+//            } else {
+//                //return "officePicture";
+//                return new ArrayList<>();
+//                //return "picture";
+//            }
         }
-        return null;
+        return imageUrls;
     }
 
     @Override

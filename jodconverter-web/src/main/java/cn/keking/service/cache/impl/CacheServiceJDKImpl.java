@@ -1,9 +1,9 @@
 package cn.keking.service.cache.impl;
 
+import cn.keking.model.FileAttribute;
 import cn.keking.service.cache.CacheService;
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import com.googlecode.concurrentlinkedhashmap.Weighers;
-import org.rocksdb.RocksDB;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Service;
 
@@ -66,6 +66,22 @@ public class CacheServiceJDKImpl implements CacheService {
             initIMGCachePool(CacheService.DEFAULT_IMG_CAPACITY);
         }
         imgCache.put(key, value);
+    }
+
+    // FIXME: 2019/11/19 待添加FileAttribute缓存
+    @Override
+    public void putFileAttributeCache(String key, List<FileAttribute> fileAttributeList) {
+        
+    }
+
+    @Override
+    public Map<String, List<FileAttribute>> getFileAttributeCache() {
+        return null;
+    }
+
+    @Override
+    public void cleanFileAttributeCache(String key) {
+
     }
 
     @Override

@@ -1,5 +1,6 @@
 package cn.keking.service.cache.impl;
 
+import cn.keking.model.FileAttribute;
 import cn.keking.service.cache.CacheService;
 import org.artofsolving.jodconverter.office.OfficeUtils;
 import org.rocksdb.RocksDB;
@@ -95,6 +96,40 @@ public class CacheServiceRocksDBImpl implements CacheService {
             db.put(REDIS_FILE_PREVIEW_IMGS_KEY.getBytes(), toByteArray(imgCacheItem));
         } catch (RocksDBException | IOException e) {
             LOGGER.error("Put into RocksDB Exception" + e);
+        }
+    }
+
+    @Override
+    public void putFileAttributeCache(String key, List<FileAttribute> fileAttributeList) {
+        try {
+            Map<String,List<FileAttribute>> fileAttributeCacheItem = getFileAttributeCache();
+            fileAttributeCacheItem.put(key,fileAttributeList);
+            db.put(REDIS_FILE_PREVIEW_FILEATTRIBUTE_KEY.getBytes(), toByteArray(fileAttributeCacheItem));
+        } catch (RocksDBException | IOException e) {
+            LOGGER.error("Put into RocksDB Exception" + e);
+        }
+    }
+
+    @Override
+    public Map<String, List<FileAttribute>> getFileAttributeCache() {
+        Map<String,List<FileAttribute>> result = new HashMap<>();
+        try{
+            result = (Map<String,List<FileAttribute>>) toObject(db.get(REDIS_FILE_PREVIEW_FILEATTRIBUTE_KEY.getBytes()));
+        } catch (RocksDBException | IOException | ClassNotFoundException e) {
+            LOGGER.error("Get from RocksDB Exception" + e);
+        }
+        LOGGER.info("Map<String,List<FileAttribute>> getFileAttributeCache()-->result"+result);
+        return result;
+    }
+
+    @Override
+    public void cleanFileAttributeCache(String key) {
+        try {
+            Map<String,List<FileAttribute>> fileAttributeCacheItem = getFileAttributeCache();
+            fileAttributeCacheItem.remove(key);
+            db.put(REDIS_FILE_PREVIEW_FILEATTRIBUTE_KEY.getBytes(), toByteArray(fileAttributeCacheItem));
+        } catch (RocksDBException | IOException e) {
+            LOGGER.error("Remove into RocksDB Exception" + e);
         }
     }
 

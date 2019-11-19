@@ -2,15 +2,19 @@ package cn.keking.web.controller;
 
 import cn.keking.config.ConfigConstants;
 import cn.keking.model.FileAttribute;
+import cn.keking.model.ReturnResponse;
 import cn.keking.service.FilePreview;
 import cn.keking.service.FilePreviewFactory;
+import cn.keking.service.cache.CacheService;
 import cn.keking.utils.FileMD5StringUtil;
 import cn.keking.utils.FileUtils;
 import cn.keking.watermarkprocessor.WatermarkException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author li jiafang
@@ -43,6 +49,11 @@ public class FileParsingController {
     @Autowired
     FilePreviewFactory previewFactory;
 
+
+    @Qualifier("cacheServiceRocksDBImpl")
+    @Autowired
+    CacheService cacheService;
+
     @Value("${base.url}")
     private String baseUrl;
 
@@ -58,7 +69,7 @@ public class FileParsingController {
      * @RequestParam("imgfile") MultipartFile imgfile,
      */
     @RequestMapping(value = "fileSynchronousUpload", method = RequestMethod.POST)
-    public List<String> fileSynchronousUpload(@RequestParam("file") MultipartFile file,
+    public String fileSynchronousUpload(@RequestParam("file") MultipartFile file,
                                               @RequestParam("imgfile") MultipartFile imgfile,
                                               String watermarkType,String watermarkText,
                                               Model model, HttpServletRequest req) throws IOException, WatermarkException {
@@ -90,9 +101,11 @@ public class FileParsingController {
 
         FilePreview filePreview = previewFactory.get(fileAttribute);
         LOGGER.info("onlinePreview-->filePreview 的属性:"+filePreview);
-        List<String> s = filePreview.filePreviewHandleList(url, model, fileAttribute,imgfile);
-        return s;
-
+        List<String> imgUrlsList = filePreview.filePreviewHandleList(url, model, fileAttribute,imgfile);
+        if (imgUrlsList.size() > 0 && imgUrlsList != null){
+            return new ObjectMapper().writeValueAsString(new ReturnResponse<List>(200, "SUCCESS", imgUrlsList));
+        }
+        return new ObjectMapper().writeValueAsString(new ReturnResponse<String>(500, "fail", fileAttribute.getType()+"解析失败"));
     }
 
     /**
@@ -142,20 +155,101 @@ public class FileParsingController {
         return fileName;
     }
 
-
     /**
      * 文件异步上传，上传后返回文件id
      * @param file
-     * @param request
+     * @param imgfile
+     * @param watermarkType
+     * @param watermarkText
+     * @param model
+     * @param req
      * @return
      * @throws JsonProcessingException
      */
     @RequestMapping(value = "fileAsynchronousUpload", method = RequestMethod.POST)
     public String fileAsynchronousUpload(@RequestParam("file") MultipartFile file,
-                             HttpServletRequest request) throws JsonProcessingException {
+                                         @RequestParam("imgfile") MultipartFile imgfile,
+                                         String watermarkType,String watermarkText,
 
+                                         Model model, HttpServletRequest req) throws JsonProcessingException {
+        /**
+         *  获取文件名字 添加到缓存队列中解析，返回唯一状态码
+         */
+        String fileName = saveAndGetFileName(file);
 
-        return null;
+        String fielMd5 = FileMD5StringUtil.getFileMD5String(file);
+        /**
+         * 读取新路径下的文件并开始解析文件类型
+         */
+        String url = baseUrl+"\\"+demoPath+fileName;
+        FileAttribute fileAttribute = fileUtils.getFileAttribute(url);
+        // 获取文件的md5值 文件内容没有改变则值不变，改变内容则值改变
+        fileAttribute.setFileMD5(fielMd5);
+        fileAttribute.setName(fileName);
+        fileAttribute.setFilePath(fileDir+demoPath+fileName);  // 获取上传文件的路径
+        fileAttribute.setUrl("");
+        fileAttribute.setDecodedUrl("");
+        /**
+         * 将文件添加到缓存并返回文件的状态码,然后解析文件内容 采用多线程
+         */
+        List<FileAttribute> fileAttributeList = new ArrayList<>();
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                fileAttributeList.add(fileAttribute);
+                cacheService.putFileAttributeCache(fielMd5,fileAttributeList);
+            }
+        });
+        Thread t2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    // 引入t1线程，等待t1线程执行完
+                    t1.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                /**
+                 * 开始执行t2
+                 * 对添加到缓存里的路径进行遍历解析
+                 */
+                Map<String, List<FileAttribute>> fileAttributeCache = cacheService.getFileAttributeCache();
+                // 对map遍历来实现文件的解析
+                for (Map.Entry<String,List<FileAttribute>> entry : fileAttributeCache.entrySet()){
+                    String key = entry.getKey();
+                    FileAttribute fileAttribute = entry.getValue().get(0);
+                    // watermarkType;  水印类型 0 文字 1图片
+                    if ("0".equals(watermarkType)){
+                        fileAttribute.setWatermarkText(watermarkText);
+                    }
+                    LOGGER.info("onlinePreview-->fileAttribute 的属性:"+fileAttribute);
+                    req.setAttribute("fileKey", req.getParameter("fileKey"));
+
+                    model.addAttribute("officePreviewType", req.getParameter("officePreviewType"));
+                    LOGGER.info("onlinePreview-->model 的属性:"+model);
+
+                    FilePreview filePreview = previewFactory.get(fileAttribute);
+                    LOGGER.info("onlinePreview-->filePreview 的属性:"+filePreview);
+                    try {
+                        List<String> imgUrlsList = filePreview.filePreviewHandleList(url, model, fileAttribute,imgfile);
+                        if (imgUrlsList.size() > 0 && imgUrlsList != null){
+                            cacheService.cleanFileAttributeCache(key);
+                        }
+                    } catch (WatermarkException e) {
+                        LOGGER.error("处理水印出现异常:"+e);
+                    } catch (IOException e) {
+                        LOGGER.error("处理文件出现异常:"+e);
+                    }
+                }
+
+            }
+        });
+        t1.start();
+
+        t2.start();
+
+        return new ObjectMapper().writeValueAsString(new ReturnResponse<>(200,"success",fielMd5));
+
     }
 
 
@@ -166,10 +260,11 @@ public class FileParsingController {
      * @throws JsonProcessingException
      */
     @RequestMapping(value = "inspectionSchedule", method = RequestMethod.POST)
-    public String inspectionSchedule(Long id) throws JsonProcessingException {
-
-
-        return null;
+    public String inspectionSchedule(String id) throws JsonProcessingException {
+        if (cacheService.getFileAttributeCache().containsKey(id)){
+            return new ObjectMapper().writeValueAsString(new ReturnResponse<>(200,"上传解析待解析","1"));
+        }
+        return new ObjectMapper().writeValueAsString(new ReturnResponse<>(200,"上传解析成功","0"));
     }
 
 

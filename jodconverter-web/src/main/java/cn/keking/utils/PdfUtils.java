@@ -25,17 +25,18 @@ public class PdfUtils {
     FileUtils fileUtils;
 
     /**
-     *
      * @param pdfFilePath 生成的pdf文件路径E:\WondersGroup\OnlinePreviewOfOfficeDocuments\kkFileView\jodconverter-web\src\main\file\测试1 - 副本 (9).pdf
-     * @param pdfName 测试1 - 副本 (9).pdf
-     * @param baseUrl http://127.0.0.1:8012/
+     * @param pdfName     测试1 - 副本 (9).pdf
+     * @param baseUrl     http://127.0.0.1:8012/
      * @return
      */
     public List<String> pdf2jpg(String pdfFilePath, String pdfName, String baseUrl, FileAttribute fileAttribute) {
         List<String> imageUrls = new ArrayList<>();
         // 查看缓存中是否存在pdfFilePath路径下已经转换过的图片，如果存在，直接返回该url
-        Integer imageCount = fileUtils.getConvertedPdfImage(pdfFilePath+fileAttribute.getFileMD5());
+        Integer imageCount = fileUtils.getConvertedPdfImage(pdfFilePath + fileAttribute.getFileMD5());
         String imageFileSuffix = ".jpg";
+        int index = pdfFilePath.lastIndexOf(".");
+        String folder = pdfFilePath.substring(0, index);
         /**
          * pdfFolder = pdfFolder
          * urlPrefix = http://127.0.0.1:8012/测试1 - 副本 (9)
@@ -43,8 +44,9 @@ public class PdfUtils {
         String pdfFolder = pdfName.substring(0, pdfName.length() - 4);
         String urlPrefix = baseUrl + pdfFolder;
         if (imageCount != null && imageCount.intValue() > 0) {
-            for (int i = 0; i < imageCount ; i++)
-            imageUrls.add(urlPrefix + "/" + i + imageFileSuffix);
+            for (int i = 0; i < imageCount; i++)
+                imageUrls.add(folder + "/" + i + imageFileSuffix);
+            //imageUrls.add(urlPrefix + "/" + i + imageFileSuffix);
             return imageUrls;
         }
         try {
@@ -52,9 +54,6 @@ public class PdfUtils {
             PDDocument doc = PDDocument.load(pdfFile);
             int pageCount = doc.getNumberOfPages();
             PDFRenderer pdfRenderer = new PDFRenderer(doc);
-
-            int index = pdfFilePath.lastIndexOf(".");
-            String folder = pdfFilePath.substring(0, index);
 
             File path = new File(folder);
             if (!path.exists()) {
@@ -69,13 +68,15 @@ public class PdfUtils {
                 imageFilePath = folder + File.separator + pageIndex + imageFileSuffix;
                 BufferedImage image = pdfRenderer.renderImageWithDPI(pageIndex, 105, ImageType.RGB);
                 ImageIOUtil.writeImage(image, imageFilePath, 105);
-                imageUrls.add(urlPrefix + "/" + pageIndex + imageFileSuffix);
+
+                //imageUrls.add(urlPrefix + "/" + pageIndex + imageFileSuffix); 获取url图片链接
+                imageUrls.add(imageFilePath);
             }
             doc.close();
             /**
              * 添加到缓存
              */
-            fileUtils.addConvertedPdfImage(pdfFilePath+fileAttribute.getFileMD5(), pageCount);
+            fileUtils.addConvertedPdfImage(pdfFilePath + fileAttribute.getFileMD5(), pageCount);
         } catch (IOException e) {
             LOGGER.error("Convert pdf to jpg exception", e);
         }

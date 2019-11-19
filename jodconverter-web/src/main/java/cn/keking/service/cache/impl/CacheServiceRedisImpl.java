@@ -1,5 +1,6 @@
 package cn.keking.service.cache.impl;
 
+import cn.keking.model.FileAttribute;
 import cn.keking.service.FileConverQueueTask;
 import cn.keking.service.cache.CacheService;
 import org.redisson.Redisson;
@@ -58,6 +59,22 @@ public class CacheServiceRedisImpl implements CacheService {
     public void putImgCache(String key, List<String> value) {
         RMapCache<String, List<String>> convertedList = redissonClient.getMapCache(REDIS_FILE_PREVIEW_IMGS_KEY);
         convertedList.fastPut(key, value);
+    }
+
+    // FIXME: 2019/11/19 待添加FileAttribute缓存
+    @Override
+    public void putFileAttributeCache(String key, List<FileAttribute> fileAttributeList) {
+        
+    }
+
+    @Override
+    public Map<String, List<FileAttribute>> getFileAttributeCache() {
+        return null;
+    }
+
+    @Override
+    public void cleanFileAttributeCache(String key) {
+
     }
 
     @Override
