@@ -71,8 +71,6 @@ public class OfficeFilePreviewImpl implements FilePreview {
         String baseUrl = (String) RequestContextHolder.currentRequestAttributes().getAttribute("baseUrl",0);
         String suffix=fileAttribute.getSuffix();
         String fileName=fileAttribute.getName();
-        // 获取文件的md5值
-        String fileMd5 = fileAttribute.getFileMD5();
         // isHtml 判断是否是xls文件，如果是就转成html页，不是就转成其他模式
         boolean isHtml = suffix.equalsIgnoreCase("xls") || suffix.equalsIgnoreCase("xlsx");
         // pdfName = 测试1 - 副本 (9).pdf
@@ -97,6 +95,10 @@ public class OfficeFilePreviewImpl implements FilePreview {
             if (StringUtils.hasText(outFilePath)) {
                 //fixme 完成office转PDF
                 officeToPdf.openOfficeToPDF(filePath, outFilePath);
+            }
+            if (isHtml) {
+                // 对转换后的文件进行操作(改变编码方式)
+                fileUtils.doActionConvertedFile(outFilePath);
             }
             /**
              * 处理完添加到缓存
