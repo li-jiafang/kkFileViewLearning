@@ -53,6 +53,11 @@ public class CacheServiceJDKImpl implements CacheService {
     }
 
     @Override
+    public void initFileAttributeCachePool(Integer capacity) {
+
+    }
+
+    @Override
     public void putPDFCache(String key, String value) {
         if (pdfCache == null) {
             initPDFCachePool(CacheService.DEFAULT_PDF_CAPACITY);

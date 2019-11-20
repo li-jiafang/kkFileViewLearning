@@ -1,10 +1,12 @@
 package cn.keking.model;
 
+import java.io.Serializable;
+
 /**
  * Created by kl on 2018/1/17.
  * Content :
  */
-public class FileAttribute {
+public class FileAttribute implements Serializable {
 
     private FileType type;  // 文件类型
 
@@ -22,6 +24,15 @@ public class FileAttribute {
 
     private String watermarkText; // 水印文本
 
+    private String watermarkImagepath; // 水印图片路径
+
+    public String getWatermarkImagepath() {
+        return watermarkImagepath;
+    }
+
+    public void setWatermarkImagepath(String watermarkImagepath) {
+        this.watermarkImagepath = watermarkImagepath;
+    }
 
     public String getWatermarkText() {
         return watermarkText;

@@ -21,9 +21,13 @@ public interface CacheService {
     final Integer DEFAULT_IMG_CAPACITY = 500000;
     final Integer DEFAULT_PDFIMG_CAPACITY = 500000;
 
+    final Integer DEFAULT_FILEATTRIBUTE_CAPACITY = 500000;
+
     void initPDFCachePool(Integer capacity);
     void initIMGCachePool(Integer capacity);
     void initPdfImagesCachePool(Integer capacity);
+    void initFileAttributeCachePool(Integer capacity);
+
     void putPDFCache(String key, String value);
     void putImgCache(String key, List<String> value);
     // 将上传文件添加到文件属性中

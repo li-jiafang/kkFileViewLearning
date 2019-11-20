@@ -56,6 +56,10 @@ public class CacheServiceRocksDBImpl implements CacheService {
                 Map<String, Integer> initPDFIMGCache = new HashMap<>();
                 db.put(REDIS_FILE_PREVIEW_PDF_IMGS_KEY.getBytes(), toByteArray(initPDFIMGCache));
             }
+            if (db.get(REDIS_FILE_PREVIEW_FILEATTRIBUTE_KEY.getBytes()) == null){
+                Map<String,List<FileAttribute>> initFileAttributeCache = new HashMap<>();
+                db.put(REDIS_FILE_PREVIEW_FILEATTRIBUTE_KEY.getBytes(),toByteArray(initFileAttributeCache));
+            }
         } catch (RocksDBException | IOException e) {
             LOGGER.error("Uable to init RocksDB" + e);
         }
@@ -74,6 +78,11 @@ public class CacheServiceRocksDBImpl implements CacheService {
 
     @Override
     public void initPdfImagesCachePool(Integer capacity) {
+
+    }
+
+    @Override
+    public void initFileAttributeCachePool(Integer capacity) {
 
     }
 

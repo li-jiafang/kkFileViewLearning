@@ -1,5 +1,6 @@
 package cn.keking;
 
+import cn.keking.model.FileAttribute;
 import cn.keking.service.cache.CacheService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,12 +27,14 @@ public class FilePreviewApplicationTests {
 	@Test
 	public void testCache(){
 
-		Map<String,String> result = cacheService.getPDFCache();
-		System.out.println(result);
+//		Map<String,String> result = cacheService.getPDFCache();
+//		System.out.println(result);
+//
+//		Map<String, List<String>> imgCache = cacheService.getImgCache();
+//		System.out.println(imgCache);
 
-		Map<String, List<String>> imgCache = cacheService.getImgCache();
-		System.out.println(imgCache);
-
+		Map<String, List<FileAttribute>> fileAttributeCache = cacheService.getFileAttributeCache();
+		System.out.println(fileAttributeCache);
 	}
 
 	@Test

@@ -50,6 +50,11 @@ public class CacheServiceRedisImpl implements CacheService {
     }
 
     @Override
+    public void initFileAttributeCachePool(Integer capacity) {
+
+    }
+
+    @Override
     public void putPDFCache(String key, String value) {
         RMapCache<String, String> convertedList = redissonClient.getMapCache(REDIS_FILE_PREVIEW_PDF_KEY);
         convertedList.fastPut(key, value);

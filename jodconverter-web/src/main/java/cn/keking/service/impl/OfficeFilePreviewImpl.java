@@ -7,6 +7,7 @@ import cn.keking.service.FilePreview;
 import cn.keking.utils.*;
 import cn.keking.watermarkprocessor.WatermarkException;
 import cn.keking.watermarkprocessor.WatermarkProcessor;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,22 +109,30 @@ public class OfficeFilePreviewImpl implements FilePreview {
                 fileUtils.addConvertedFile(cachefilekey, fileUtils.getRelativePath(outFilePath));
             }
         }
+        if (isHtml){
+            List<String> isHtmlList = new ArrayList<>();
+            isHtmlList.add(outFilePath);
+            return isHtmlList;
+        }
 
         /**
          * 转换成pdf后处理并添加水印
          */
-        File file = new File(outFilePath);
-        if (fileAttribute.getWatermarkText() != null){
-            WatermarkProcessor.process(file,fileAttribute.getWatermarkText());
+        if (!isHtml){
+            File file = new File(outFilePath);
+            if (fileAttribute.getWatermarkText() != null){
+                WatermarkProcessor.process(file,fileAttribute.getWatermarkText());
+            }
+            if (!imgFile.isEmpty()){
+                InputStream ins = imgFile.getInputStream();
+                File imageFile = new File(imgFile.getOriginalFilename());
+                FileUtils.inputStreamToFile(ins, imageFile);
+                WatermarkProcessor.process(file,imageFile);
+                File del = new File(imageFile.toURI());
+                del.delete();
+            }
         }
-        if (!imgFile.isEmpty() && !isHtml){
-            InputStream ins = imgFile.getInputStream();
-            File imageFile = new File(imgFile.getOriginalFilename());
-            FileUtils.inputStreamToFile(ins, imageFile);
-            WatermarkProcessor.process(file,imageFile);
-            File del = new File(imageFile.toURI());
-            del.delete();
-        }
+
         /**
          * 对pdf文件再次处理获取图片
          */
