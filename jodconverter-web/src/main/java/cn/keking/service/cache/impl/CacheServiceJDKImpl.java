@@ -90,6 +90,16 @@ public class CacheServiceJDKImpl implements CacheService {
     }
 
     @Override
+    public void putWaterMarkCache(String key, String value) {
+
+    }
+
+    @Override
+    public Map<String, String> getWaterMarkCache() {
+        return null;
+    }
+
+    @Override
     public Map<String, String> getPDFCache() {
         if (pdfCache == null) {
             initPDFCachePool(CacheService.DEFAULT_PDF_CAPACITY);

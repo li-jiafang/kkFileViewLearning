@@ -143,6 +143,29 @@ public class CacheServiceRocksDBImpl implements CacheService {
     }
 
     @Override
+    public void putWaterMarkCache(String key, String value) {
+        try {
+            Map<String, String> waterMarkCacheItem = getPDFCache();
+            waterMarkCacheItem.put(key, value);
+            db.put(REDIS_FILE_WATERMARK_PDF_KEY.getBytes(), toByteArray(waterMarkCacheItem));
+        } catch (RocksDBException | IOException e) {
+            LOGGER.error("Put into RocksDB Exception" + e);
+        }
+    }
+
+    @Override
+    public Map<String, String> getWaterMarkCache() {
+        Map<String, String> result = new HashMap<>();
+        try{
+            result = (Map<String, String>) toObject(db.get(REDIS_FILE_WATERMARK_PDF_KEY.getBytes()));
+        } catch (RocksDBException | IOException | ClassNotFoundException e) {
+            LOGGER.error("Get from RocksDB Exception" + e);
+        }
+        LOGGER.info("Map<String, String> getWaterMarkCache()-->result"+result);
+        return result;
+    }
+
+    @Override
     public Map<String, String> getPDFCache() {
         Map<String, String> result = new HashMap<>();
         try{

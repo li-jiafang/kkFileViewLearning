@@ -22,9 +22,19 @@ public class FileAttribute implements Serializable {
 
     private String filePath;  // 上传后文件的路径
 
+    private String watermarkType; // 水印类型
+
     private String watermarkText; // 水印文本
 
     private String watermarkImagepath; // 水印图片路径
+
+    public String getWatermarkType() {
+        return watermarkType;
+    }
+
+    public void setWatermarkType(String watermarkType) {
+        this.watermarkType = watermarkType;
+    }
 
     public String getWatermarkImagepath() {
         return watermarkImagepath;
@@ -59,6 +69,22 @@ public class FileAttribute implements Serializable {
         this.name = name;
         this.url = url;
         this.decodedUrl = decodedUrl;
+    }
+
+    @Override
+    public String toString() {
+        return "FileAttribute{" +
+                "type=" + type +
+                ", suffix='" + suffix + '\'' +
+                ", name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                ", decodedUrl='" + decodedUrl + '\'' +
+                ", fileMD5='" + fileMD5 + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", watermarkType='" + watermarkType + '\'' +
+                ", watermarkText='" + watermarkText + '\'' +
+                ", watermarkImagepath='" + watermarkImagepath + '\'' +
+                '}';
     }
 
     public String getFileMD5() {

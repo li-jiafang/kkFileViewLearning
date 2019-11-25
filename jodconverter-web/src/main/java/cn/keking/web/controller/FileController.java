@@ -43,7 +43,7 @@ public class FileController {
      * @return
      * @throws JsonProcessingException
      */
-    @RequestMapping(value = "fileUpload", method = RequestMethod.POST)
+    //@RequestMapping(value = "fileUpload", method = RequestMethod.POST)
     public String fileUpload(@RequestParam("file") MultipartFile file,
                              HttpServletRequest request) throws JsonProcessingException {
         LOGGER.info("fileUpload--->上传文件file名字:"+file.getOriginalFilename());
@@ -90,7 +90,7 @@ public class FileController {
 
 
 
-    @RequestMapping(value = "deleteFile", method = RequestMethod.GET)
+    //@RequestMapping(value = "deleteFile", method = RequestMethod.GET)
     public String deleteFile(String fileName) throws JsonProcessingException {
         if (fileName.contains("/")) {
             fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
@@ -107,7 +107,7 @@ public class FileController {
      * @return
      * @throws JsonProcessingException
      */
-    @RequestMapping(value = "listFiles", method = RequestMethod.GET)
+    //@RequestMapping(value = "listFiles", method = RequestMethod.GET)
     public String getFiles() throws JsonProcessingException {
         List<Map<String, String>> list = Lists.newArrayList();
         File file = new File(fileDir + demoPath);

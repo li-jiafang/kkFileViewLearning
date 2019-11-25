@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +29,7 @@ import java.util.List;
  * Content :处理pdf文件
  */
 @Service
-public class PdfFilePreviewImpl implements FilePreview{
+public class PdfFilePreviewImpl implements FilePreview {
 
     @Value("${wartermark.text}")
     private String wartermarkText;
@@ -59,12 +58,12 @@ public class PdfFilePreviewImpl implements FilePreview{
     public static final Logger LOGGER = LoggerFactory.getLogger(PdfFilePreviewImpl.class);
 
     @Override
-    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute, MultipartFile imgFile) throws WatermarkException, IOException {
-        String suffix=fileAttribute.getSuffix();
-        String fileName=fileAttribute.getName();
+    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute) throws WatermarkException, IOException {
+        String suffix = fileAttribute.getSuffix();
+        String fileName = fileAttribute.getName();
         String officePreviewType = model.asMap().get("officePreviewType") == null ? ConfigConstants.getOfficePreviewType() : model.asMap().get("officePreviewType").toString();
-        LOGGER.info("PdfFilePreviewImpl ---> officePreviewType:"+officePreviewType);
-        String baseUrl = (String) RequestContextHolder.currentRequestAttributes().getAttribute("baseUrl",0);
+        LOGGER.info("PdfFilePreviewImpl ---> officePreviewType:" + officePreviewType);
+        String baseUrl = (String) RequestContextHolder.currentRequestAttributes().getAttribute("baseUrl", 0);
         model.addAttribute("pdfUrl", url);
         String pdfName = fileName.substring(0, fileName.lastIndexOf(".") + 1) + "pdf";
         /**
@@ -73,8 +72,8 @@ public class PdfFilePreviewImpl implements FilePreview{
          * cachefilekey是缓存文件的key
          */
         String filePath = fileAttribute.getFilePath();
-        String cachefilekey = pdfName + fileAttribute.getFileMD5();
-        LOGGER.info("PdfFilePreviewImpl --filePreviewHandleList-> filePath:"+filePath);
+        String cachefilekey = pdfName + fileAttribute.getFileMD5() + ("0".equals(fileAttribute.getWatermarkType()) ? fileAttribute.getWatermarkText() : fileAttribute.getWatermarkImagepath());
+        LOGGER.info("PdfFilePreviewImpl --filePreviewHandleList-> filePath:" + filePath);
         if (OfficeFilePreviewImpl.OFFICE_PREVIEW_TYPE_IMAGE.equals(officePreviewType) || OfficeFilePreviewImpl.OFFICE_PREVIEW_TYPE_ALLIMAGES.equals(officePreviewType)) {
             /**
              * 处理完添加到缓存
@@ -89,22 +88,18 @@ public class PdfFilePreviewImpl implements FilePreview{
          * 读取pdf后处理并添加水印
          */
         File file = new File(filePath);
-        if (fileAttribute.getWatermarkText() != null){
-            WatermarkProcessor.process(file,fileAttribute.getWatermarkText());
+        if (fileAttribute.getWatermarkText() != null) {
+            WatermarkProcessor.process(file, fileAttribute.getWatermarkText());
         }
-        if (!imgFile.isEmpty()){
-            InputStream ins = imgFile.getInputStream();
-            File imageFile = new File(imgFile.getOriginalFilename());
-            FileUtils.inputStreamToFile(ins, imageFile);
-            WatermarkProcessor.process(file,imageFile);
-            File del = new File(imageFile.toURI());
-            del.delete();
+        if (fileAttribute.getWatermarkImagepath() != null) {
+            File watermarkImagePath = new File(fileAttribute.getWatermarkImagepath());
+            WatermarkProcessor.process(file,watermarkImagePath);
         }
-        List<String> imageUrls = pdfUtils.pdf2jpg(filePath, pdfName, baseUrl,fileAttribute);
-        LOGGER.info("filePreviewHandle--->imageUrls:"+imageUrls);
+        List<String> imageUrls = pdfUtils.pdf2jpg(filePath, pdfName, baseUrl, fileAttribute);
+        LOGGER.info("filePreviewHandle--->imageUrls:" + imageUrls);
         if (imageUrls == null || imageUrls.size() < 1) {
             model.addAttribute("msg", "office转图片异常，请联系管理员");
-            model.addAttribute("fileType",fileAttribute.getSuffix());
+            model.addAttribute("fileType", fileAttribute.getSuffix());
             //return "fileNotSupported";
             return new ArrayList<>();
         }
@@ -115,30 +110,30 @@ public class PdfFilePreviewImpl implements FilePreview{
 
     @Override
     public String filePreviewHandle(String url, Model model, FileAttribute fileAttribute) throws WatermarkException {
-        String suffix=fileAttribute.getSuffix();
-        String fileName=fileAttribute.getName();
+        String suffix = fileAttribute.getSuffix();
+        String fileName = fileAttribute.getName();
         String officePreviewType = model.asMap().get("officePreviewType") == null ? ConfigConstants.getOfficePreviewType() : model.asMap().get("officePreviewType").toString();
-        LOGGER.info("PdfFilePreviewImpl ---> officePreviewType:"+officePreviewType);
-        String baseUrl = (String) RequestContextHolder.currentRequestAttributes().getAttribute("baseUrl",0);
+        LOGGER.info("PdfFilePreviewImpl ---> officePreviewType:" + officePreviewType);
+        String baseUrl = (String) RequestContextHolder.currentRequestAttributes().getAttribute("baseUrl", 0);
         model.addAttribute("pdfUrl", url);
         String pdfName = fileName.substring(0, fileName.lastIndexOf(".") + 1) + "pdf";
         String outFilePath = fileDir + pdfName;
-        LOGGER.info("PdfFilePreviewImpl ---> outFilePath:"+outFilePath);
+        LOGGER.info("PdfFilePreviewImpl ---> outFilePath:" + outFilePath);
         if (OfficeFilePreviewImpl.OFFICE_PREVIEW_TYPE_IMAGE.equals(officePreviewType) || OfficeFilePreviewImpl.OFFICE_PREVIEW_TYPE_ALLIMAGES.equals(officePreviewType)) {
             //当文件不存在时，就去下载
             ReturnResponse<String> response = downloadUtils.downLoad(fileAttribute, fileName);
-            if(!SystemTypeUtils.isOSLinux()){
-                LOGGER.info("PdfFilePreviewImpl ---> wartermarkWinImagePath:"+wartermarkWinImagePath);
+            if (!SystemTypeUtils.isOSLinux()) {
+                LOGGER.info("PdfFilePreviewImpl ---> wartermarkWinImagePath:" + wartermarkWinImagePath);
                 File file = new File(outFilePath);
                 File imageFile = new File(wartermarkWinImagePath);
                 WatermarkProcessor.process(file, wartermarkText);
-                WatermarkProcessor.process(file,imageFile);
+                WatermarkProcessor.process(file, imageFile);
             } else {
-                LOGGER.info("PdfFilePreviewImpl ---> wartermarkLinuxImagePath:"+wartermarkLinuxImagePath);
+                LOGGER.info("PdfFilePreviewImpl ---> wartermarkLinuxImagePath:" + wartermarkLinuxImagePath);
                 File file = new File(outFilePath);
                 File imageFile = new File(wartermarkLinuxImagePath);
                 WatermarkProcessor.process(file, wartermarkText);
-                WatermarkProcessor.process(file,imageFile);
+                WatermarkProcessor.process(file, imageFile);
             }
             if (0 != response.getCode()) {
                 model.addAttribute("fileType", suffix);
@@ -146,11 +141,11 @@ public class PdfFilePreviewImpl implements FilePreview{
                 return "fileNotSupported";
             }
             outFilePath = response.getContent();
-            List<String> imageUrls = pdfUtils.pdf2jpg(outFilePath, pdfName, baseUrl,fileAttribute);
-            LOGGER.info("PdfFilePreviewImpl ---> imageUrls:"+imageUrls);
+            List<String> imageUrls = pdfUtils.pdf2jpg(outFilePath, pdfName, baseUrl, fileAttribute);
+            LOGGER.info("PdfFilePreviewImpl ---> imageUrls:" + imageUrls);
             if (imageUrls == null || imageUrls.size() < 1) {
                 model.addAttribute("msg", "pdf转图片异常，请联系管理员");
-                model.addAttribute("fileType",fileAttribute.getSuffix());
+                model.addAttribute("fileType", fileAttribute.getSuffix());
                 return "fileNotSupported";
             }
             model.addAttribute("imgurls", imageUrls);

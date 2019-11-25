@@ -7,7 +7,6 @@ import cn.keking.service.FilePreview;
 import cn.keking.utils.*;
 import cn.keking.watermarkprocessor.WatermarkException;
 import cn.keking.watermarkprocessor.WatermarkProcessor;
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,14 +62,13 @@ public class OfficeFilePreviewImpl implements FilePreview {
     public static final String OFFICE_PREVIEW_TYPE_ALLIMAGES = "allImages";
 
 
-
     @Override
-    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute, MultipartFile imgFile) throws WatermarkException, IOException {
+    public List<String> filePreviewHandleList(String url, Model model, FileAttribute fileAttribute) throws WatermarkException, IOException {
         String officePreviewType = model.asMap().get("officePreviewType") == null ? ConfigConstants.getOfficePreviewType() : model.asMap().get("officePreviewType").toString();
-        LOGGER.info("filePreviewHandle--->officePreviewType:"+officePreviewType);
-        String baseUrl = (String) RequestContextHolder.currentRequestAttributes().getAttribute("baseUrl",0);
-        String suffix=fileAttribute.getSuffix();
-        String fileName=fileAttribute.getName();
+        LOGGER.info("filePreviewHandle--->officePreviewType:" + officePreviewType);
+        String baseUrl = (String) RequestContextHolder.currentRequestAttributes().getAttribute("baseUrl", 0);
+        String suffix = fileAttribute.getSuffix();
+        String fileName = fileAttribute.getName();
         // isHtml 判断是否是xls文件，如果是就转成html页，不是就转成其他模式
         boolean isHtml = suffix.equalsIgnoreCase("xls") || suffix.equalsIgnoreCase("xlsx");
         // pdfName = 测试1 - 副本 (9).pdf
@@ -83,7 +80,7 @@ public class OfficeFilePreviewImpl implements FilePreview {
          */
         String filePath = fileAttribute.getFilePath();
         String outFilePath = fileDir + fileOutPathName + pdfName;
-        String cachefilekey = pdfName + fileAttribute.getFileMD5();
+        String cachefilekey = pdfName + fileAttribute.getFileMD5() + ("0".equals(fileAttribute.getWatermarkType()) ? fileAttribute.getWatermarkText() : fileAttribute.getWatermarkImagepath());
 
         /**
          * 如果文件名存在，md5相同，则直接读取缓存
@@ -102,60 +99,49 @@ public class OfficeFilePreviewImpl implements FilePreview {
                 fileUtils.doActionConvertedFile(outFilePath);
             }
             /**
+             * 转换成pdf后处理并添加水印 并对文件添加缓存
+             */
+            if (!isHtml) {
+                File file = new File(outFilePath);
+                if (fileAttribute.getWatermarkText() != null) {
+                    WatermarkProcessor.process(file, fileAttribute.getWatermarkText());
+                }
+                if (fileAttribute.getWatermarkImagepath() != null) {
+                    File watermarkImagePath = new File(fileAttribute.getWatermarkImagepath());
+                    WatermarkProcessor.process(file,watermarkImagePath);
+                }
+            }
+            /**
              * 处理完添加到缓存
              */
             if (ConfigConstants.isCacheEnabled()) {
                 // 加入缓存
                 fileUtils.addConvertedFile(cachefilekey, fileUtils.getRelativePath(outFilePath));
             }
+
         }
-        if (isHtml){
+        if (isHtml) {
             List<String> isHtmlList = new ArrayList<>();
             isHtmlList.add(outFilePath);
             return isHtmlList;
         }
 
-        /**
-         * 转换成pdf后处理并添加水印
-         */
-        if (!isHtml){
-            File file = new File(outFilePath);
-            if (fileAttribute.getWatermarkText() != null){
-                WatermarkProcessor.process(file,fileAttribute.getWatermarkText());
-            }
-            if (!imgFile.isEmpty()){
-                InputStream ins = imgFile.getInputStream();
-                File imageFile = new File(imgFile.getOriginalFilename());
-                FileUtils.inputStreamToFile(ins, imageFile);
-                WatermarkProcessor.process(file,imageFile);
-                File del = new File(imageFile.toURI());
-                del.delete();
-            }
-        }
 
         /**
          * 对pdf文件再次处理获取图片
          */
         List<String> imageUrls = new ArrayList<>();
         if (!isHtml && baseUrl != null && (OFFICE_PREVIEW_TYPE_IMAGE.equals(officePreviewType) || OFFICE_PREVIEW_TYPE_ALLIMAGES.equals(officePreviewType))) {
-            imageUrls = pdfUtils.pdf2jpg(outFilePath, pdfName, baseUrl,fileAttribute);
-            LOGGER.info("filePreviewHandle--->imageUrls:"+imageUrls);
+            imageUrls = pdfUtils.pdf2jpg(outFilePath, pdfName, baseUrl, fileAttribute);
+            LOGGER.info("filePreviewHandle--->imageUrls:" + imageUrls);
             if (imageUrls == null || imageUrls.size() < 1) {
                 model.addAttribute("msg", "office转图片异常，请联系管理员");
-                model.addAttribute("fileType",fileAttribute.getSuffix());
+                model.addAttribute("fileType", fileAttribute.getSuffix());
                 //return "fileNotSupported";
                 return new ArrayList<>();
             }
             model.addAttribute("imgurls", imageUrls);
             model.addAttribute("currentUrl", imageUrls.get(0));
-//            if (OFFICE_PREVIEW_TYPE_IMAGE.equals(officePreviewType)) {
-//                //return "officePicture";
-//                return new ArrayList<>();
-//            } else {
-//                //return "officePicture";
-//                return new ArrayList<>();
-//                //return "picture";
-//            }
         }
         return imageUrls;
     }
@@ -172,22 +158,22 @@ public class OfficeFilePreviewImpl implements FilePreview {
          * fileName = 测试1 - 副本 (9).docx
          */
         String officePreviewType = model.asMap().get("officePreviewType") == null ? ConfigConstants.getOfficePreviewType() : model.asMap().get("officePreviewType").toString();
-        LOGGER.info("filePreviewHandle--->officePreviewType:"+officePreviewType);
+        LOGGER.info("filePreviewHandle--->officePreviewType:" + officePreviewType);
         /*if (OFFICE_PREVIEW_TYPE_ALLIMAGES.equals(officePreviewType)){
             return null;
         }*/
-        String baseUrl = (String) RequestContextHolder.currentRequestAttributes().getAttribute("baseUrl",0);
-        String suffix=fileAttribute.getSuffix();
-        String fileName=fileAttribute.getName();
+        String baseUrl = (String) RequestContextHolder.currentRequestAttributes().getAttribute("baseUrl", 0);
+        String suffix = fileAttribute.getSuffix();
+        String fileName = fileAttribute.getName();
         // isHtml 判断是否是xls文件，如果是就转成html页，不是就转成其他模式
         boolean isHtml = suffix.equalsIgnoreCase("xls") || suffix.equalsIgnoreCase("xlsx");
         // pdfName = 测试1 - 副本 (9).pdf
         String pdfName = fileName.substring(0, fileName.lastIndexOf(".") + 1) + (isHtml ? "html" : "pdf");
         /**
          *  outFilePath是pdf生成后的文件路径
-          */
+         */
         String outFilePath = fileDir + pdfName;
-        LOGGER.info("filePreviewHandle--->outFilePath:"+outFilePath);
+        LOGGER.info("filePreviewHandle--->outFilePath:" + outFilePath);
         // 通过redis缓存之前转换过的文件，然后判断是否已转换过，如果转换过，直接返回，否则执行转换
         if (!fileUtils.listConvertedFiles().containsKey(pdfName) || !ConfigConstants.isCacheEnabled()) {
             String filePath = fileDir + fileName;
@@ -206,19 +192,19 @@ public class OfficeFilePreviewImpl implements FilePreview {
                  */
 
                 System.out.println(wartermarkWinImagePath);
-                if(!isHtml){
-                    if(!SystemTypeUtils.isOSLinux()){
-                        LOGGER.info("filePreviewHandle--->wartermarkWinImagePath:"+wartermarkWinImagePath);
+                if (!isHtml) {
+                    if (!SystemTypeUtils.isOSLinux()) {
+                        LOGGER.info("filePreviewHandle--->wartermarkWinImagePath:" + wartermarkWinImagePath);
                         File file = new File(outFilePath);
                         File imageFile = new File(wartermarkWinImagePath);
                         WatermarkProcessor.process(file, wartermarkText);
-                        WatermarkProcessor.process(file,imageFile);
+                        WatermarkProcessor.process(file, imageFile);
                     } else {
-                        LOGGER.info("filePreviewHandle--->wartermarkLinuxImagePath:"+wartermarkLinuxImagePath);
+                        LOGGER.info("filePreviewHandle--->wartermarkLinuxImagePath:" + wartermarkLinuxImagePath);
                         File file = new File(outFilePath);
                         File imageFile = new File(wartermarkLinuxImagePath);
                         WatermarkProcessor.process(file, wartermarkText);
-                        WatermarkProcessor.process(file,imageFile);
+                        WatermarkProcessor.process(file, imageFile);
                     }
 
                 }
@@ -237,11 +223,11 @@ public class OfficeFilePreviewImpl implements FilePreview {
         // 对转换过的文件则获取url链接
         if (!isHtml && baseUrl != null && (OFFICE_PREVIEW_TYPE_IMAGE.equals(officePreviewType) || OFFICE_PREVIEW_TYPE_ALLIMAGES.equals(officePreviewType))) {
             // imageUrls = http://127.0.0.1:8012/测试1 - 副本 (9)/0.jpg
-            List<String> imageUrls = pdfUtils.pdf2jpg(outFilePath, pdfName, baseUrl,fileAttribute);
-            LOGGER.info("filePreviewHandle--->imageUrls:"+imageUrls);
+            List<String> imageUrls = pdfUtils.pdf2jpg(outFilePath, pdfName, baseUrl, fileAttribute);
+            LOGGER.info("filePreviewHandle--->imageUrls:" + imageUrls);
             if (imageUrls == null || imageUrls.size() < 1) {
                 model.addAttribute("msg", "office转图片异常，请联系管理员");
-                model.addAttribute("fileType",fileAttribute.getSuffix());
+                model.addAttribute("fileType", fileAttribute.getSuffix());
                 return "fileNotSupported";
             }
             model.addAttribute("imgurls", imageUrls);
@@ -256,8 +242,6 @@ public class OfficeFilePreviewImpl implements FilePreview {
         model.addAttribute("pdfUrl", pdfName);
         return isHtml ? "html" : "pdf";
     }
-
-
 
 
 }

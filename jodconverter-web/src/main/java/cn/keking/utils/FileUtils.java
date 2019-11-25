@@ -366,4 +366,12 @@ public class FileUtils {
         }
         return new FileAttribute(type,suffix,fileName,url,url);
     }
+
+    public void addConvertedWaterMark(String key, String value) {
+        cacheService.putWaterMarkCache(key,value);
+    }
+
+    public Map<String,String> getConvertedWaterMark(){
+        return cacheService.getWaterMarkCache();
+    }
 }

@@ -83,6 +83,16 @@ public class CacheServiceRedisImpl implements CacheService {
     }
 
     @Override
+    public void putWaterMarkCache(String key, String value) {
+
+    }
+
+    @Override
+    public Map<String, String> getWaterMarkCache() {
+        return null;
+    }
+
+    @Override
     public Map<String, String> getPDFCache() {
         return redissonClient.getMapCache(REDIS_FILE_PREVIEW_PDF_KEY);
     }
