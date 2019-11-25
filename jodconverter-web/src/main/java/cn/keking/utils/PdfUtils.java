@@ -33,8 +33,9 @@ public class PdfUtils {
     public List<String> pdf2jpg(String pdfFilePath, String pdfName, String baseUrl, FileAttribute fileAttribute) {
         List<String> imageUrls = new ArrayList<>();
         // 查看缓存中是否存在pdfFilePath路径下已经转换过的图片，如果存在，直接返回该url
-        Integer imageCount = fileUtils.getConvertedPdfImage(pdfFilePath + fileAttribute.getFileMD5());
+        //Integer imageCount = fileUtils.getConvertedPdfImage(pdfFilePath + fileAttribute.getFileMD5());
         String imageFileSuffix = ".jpg";
+        Integer imageCount = null;
         int index = pdfFilePath.lastIndexOf(".");
         String folder = pdfFilePath.substring(0, index);
         /**

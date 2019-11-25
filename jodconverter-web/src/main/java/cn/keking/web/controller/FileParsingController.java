@@ -113,14 +113,12 @@ public class FileParsingController {
          */
         if ("0".equals(watermarkType) && !watermarkText.isEmpty()) {
             fileAttribute.setWatermarkText(watermarkText);
-            fileAttribute.setWatermarkImagepath("");
         }
 
         if ("1".equals(watermarkType) && !imgfile.isEmpty()) {
             // 上传图片路径
             String watermarkImageName = saveAndGetFileName(imgfile);
             fileAttribute.setWatermarkImagepath(fileDir + demoPath + watermarkImageName);
-            fileAttribute.setWatermarkText("");
         }
         // 获取文件的md5值 文件内容没有改变则值不变，改变内容则值改变
         fileAttribute.setFileMD5(FileMD5StringUtil.getFileMD5String(file));
@@ -128,6 +126,7 @@ public class FileParsingController {
         fileAttribute.setFilePath(fileDir + demoPath + fileName);  // 获取上传文件的路径
         fileAttribute.setUrl(url);
         fileAttribute.setDecodedUrl(url);
+        fileAttribute.setWatermarkType(watermarkType);
 
         return fileAttribute;
     }
